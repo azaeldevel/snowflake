@@ -90,7 +90,7 @@ iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
       if (! answerstring)
         return MHD_NO;
 
-      printf("POST : %s => %s",key,data);
+      //printf("POST : %s => %s",key,data);
       int number = atoi(data);
       number++;
 
