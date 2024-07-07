@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Snowflake" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Snowflake" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Snowflake" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="hellobrowser-devel">
+				<Option output="bin/Debug/hellobrowser" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="logging-devel">
+				<Option output="bin/Debug/logging" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="basicauthentication-devel">
+				<Option output="bin/Debug/basicauthentication" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="simplepost-devel">
+				<Option output="bin/Debug/simplepost" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="largepost-devel">
+				<Option output="bin/Debug/largepost" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="sessions-devel">
+				<Option output="bin/Debug/sessions" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="tlsauthentication-devel">
+				<Option output="bin/Debug/tlsauthentication" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-pedantic" />
+			<Add option="-Wall" />
+		</Compiler>
+		<Linker>
+			<Add option="`pkg-config libmicrohttpd --libs`" />
+		</Linker>
+		<Unit filename="devel/0/basicauthentication.c">
+			<Option compilerVar="CC" />
+			<Option target="basicauthentication-devel" />
+		</Unit>
+		<Unit filename="devel/0/hellobrowser.c">
+			<Option compilerVar="CC" />
+			<Option target="hellobrowser-devel" />
+		</Unit>
+		<Unit filename="devel/0/largepost.c">
+			<Option compilerVar="CC" />
+			<Option target="largepost-devel" />
+		</Unit>
+		<Unit filename="devel/0/logging.c">
+			<Option compilerVar="CC" />
+			<Option target="logging-devel" />
+		</Unit>
+		<Unit filename="devel/0/sessions.c">
+			<Option compilerVar="CC" />
+			<Option target="sessions-devel" />
+		</Unit>
+		<Unit filename="devel/0/simplepost.c">
+			<Option compilerVar="CC" />
+			<Option target="simplepost-devel" />
+		</Unit>
+		<Unit filename="devel/0/tlsauthentication.c">
+			<Option compilerVar="CC" />
+			<Option target="tlsauthentication-devel" />
+		</Unit>
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
