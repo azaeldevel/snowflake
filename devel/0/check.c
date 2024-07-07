@@ -18,7 +18,7 @@
 #define snprintf _snprintf
 #endif
 
-#define PORT            8888
+#define PORT            8081
 #define POSTBUFFERSIZE  512
 #define MAXNAMESIZE     20
 #define MAXANSWERSIZE   512
