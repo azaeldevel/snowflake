@@ -91,6 +91,15 @@
 					<Add option="-g" />
 				</Compiler>
 			</Target>
+			<Target title="check-devel">
+				<Option output="bin/Debug/check" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -102,6 +111,10 @@
 		<Unit filename="devel/0/basicauthentication.c">
 			<Option compilerVar="CC" />
 			<Option target="basicauthentication-devel" />
+		</Unit>
+		<Unit filename="devel/0/check.c">
+			<Option compilerVar="CC" />
+			<Option target="check-devel" />
 		</Unit>
 		<Unit filename="devel/0/hellobrowser.c">
 			<Option compilerVar="CC" />
