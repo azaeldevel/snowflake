@@ -15,7 +15,7 @@ project ("v0")
 add_executable (v0 "v0.cpp" "v0.h")
 add_executable (helloword "hellobrowser.c")
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
+if (CMAKE_VERSION VERSION_GREATER 3.8)
   set_property(TARGET v0 PROPERTY CXX_STANDARD 20)
 endif()
 
