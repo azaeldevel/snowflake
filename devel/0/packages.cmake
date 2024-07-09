@@ -1,0 +1,11 @@
+﻿
+include(FindPkgConfig)
+find_package(PkgConfig)
+#find_library (MICRO NAMES libmicrohttpd PATHS  "C:/Users/Azael/vcpkg/packages/libmicrohttpd_x64-windows/lib")
+pkg_check_modules(LIBMICROHTTPD REQUIRED libmicrohttpd)
+target_link_libraries(helloword ${LIBMICROHTTPD_LIBRARIES})
+target_include_directories(helloword PUBLIC ${LIBMICROHTTPD_INCLUDE_DIRS})
+target_compile_options(helloword PUBLIC ${LIBMICROHTTPD_CFLAGS_OTHER})
+target_link_libraries(simplepost ${LIBMICROHTTPD_LIBRARIES})
+target_include_directories(simplepost PUBLIC ${LIBMICROHTTPD_INCLUDE_DIRS})
+target_compile_options(simplepost PUBLIC ${LIBMICROHTTPD_CFLAGS_OTHER})
