@@ -10,23 +10,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <mysql.h>
 
 #define PORT 8081
 
 #define REALM     "\"Maintenance\""
 #define USER      "a legitimate user azael"
 #define PASSWORD  "and his password"
-
-#ifdef CMAKE_BASED
-  #define SERVERKEYFILE "../server.key"
-  #define SERVERCERTFILE "../server.pem"
-#elif defined(CODEBLOCKS)
-  #define SERVERKEYFILE "server.key"
-  #define SERVERCERTFILE "server.pem"
-#else
-  #error "Ambien de Desarrollo desconocido"
-#endif
-
 
 
 enum class erros_code
@@ -53,3 +43,12 @@ char * string_to_base64 (const char *message);
 long get_file_size (const char *filename);
 char * load_file (const char *filename);
 int is_authenticated (struct MHD_Connection *connection, const char *username,const char *password);
+
+/**
+*\brief Returna una conexion valida a la base de datos
+*/
+MYSQL* create_conection();
+/**
+*\brief Verifica que consumer key y consumer secret sean validos
+*/
+bool consumer_verifing(MYSQL*,const char* k,const char* s);

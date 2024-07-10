@@ -137,10 +137,12 @@ int is_authenticated (struct MHD_Connection *connection,
 int main (int argc, char* argv[])
 {
     struct MHD_Daemon *daemon;
-    char *key_pem;
-    char *cert_pem;
-    char *cs;
-    char *ck;
+    char *key_pem = NULL;
+    char *cert_pem = NULL;
+    char *costumer_secret = NULL;
+    char *costumer_key = NULL;
+    char *certificate_file = NULL;
+    char *certificate_file_key = NULL;
     if(argc <= 1)
     {
         printf("Uso del comando:\n");
@@ -149,11 +151,14 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    for(int i = 0; i < argc; i++)
+    for(int i = 1; i < argc; i++)
     {
         if(strcmp("-c",argv[i]) == 0 or strcmp("--certificate",argv[i]) == 0)
         {
-            if(i + 1 < argc) cert_pem = argv[++i];
+            if(i + 1 < argc)
+            {
+                certificate_file = argv[++i];
+            }
             else
             {
                 printf ("Deve indicar la direccion del certificado\n");
@@ -162,7 +167,7 @@ int main (int argc, char* argv[])
         }
         else if(strcmp("-k",argv[i]) == 0 or strcmp("--key",argv[i]) == 0)
         {
-            if(i + 1 < argc) key_pem = argv[++i];
+            if(i + 1 < argc) certificate_file_key = argv[++i];
             else
             {
                 printf ("Deve indicar la direccion de llave\n");
@@ -171,57 +176,54 @@ int main (int argc, char* argv[])
         }
         else if(strcmp("--consumer-key",argv[i]) == 0)
         {
-            if(i + 1 < argc) ck = argv[++i];
+            if(i + 1 < argc) costumer_key = argv[++i];
             else
             {
-                printf ("Deve indicar la direccion de llave\n");
+                printf ("Deve indicar la consumer key\n");
                 return EXIT_FAILURE;
             }
         }
         else if(strcmp("--consumer-secret",argv[i]) == 0)
         {
-            if(i + 1 < argc) cs = argv[++i];
+            if(i + 1 < argc) costumer_secret = argv[++i];
             else
             {
-                printf ("Deve indicar la direccion de llave\n");
+                printf ("Deve indicar cunsumer secret\n");
                 return EXIT_FAILURE;
             }
         }
     }
 #if OCTETOS_SNOWFLAKE_V0_DEVEL
-        printf("Certificado path: %s\n",cert_pem);
-        printf("Key path : %s\n",key_pem);
-#endif // OCTETOS_SNOWFLAKE_V1_DEVEL
+        //printf("Certificado path: %s\n",cert_pem);
+        //printf("Key path : %s\n",key_pem);
+#endif // OCTETOS_SNOWFLAKE_V0_DEVEL
 
-    if(not cert_pem)
-    {
-        printf("Debe indicar el certificado\n");
-        return EXIT_FAILURE;
-    }
-    if(not key_pem)
-    {
-        printf("Debe indicar la llave del certificado\n");
-        return EXIT_FAILURE;
-    }
-    if(not ck)
+    if(not costumer_key)
     {
         printf("Debe indicar la llave de la API\n");
         return EXIT_FAILURE;
     }
-    if(not cs)
+    if(not costumer_secret)
     {
         printf("Debe indicar la contrasena de la API\n");
         return EXIT_FAILURE;
     }
 
-    key_pem = load_file (SERVERKEYFILE);
-    cert_pem = load_file (SERVERCERTFILE);
+    key_pem = load_file (certificate_file_key);
+    cert_pem = load_file (certificate_file);
 
     if ((key_pem == NULL) || (cert_pem == NULL))
     {
         printf ("The key/certificate files could not be read.\n");
         if (NULL != key_pem) free (key_pem);
         if (NULL != cert_pem) free (cert_pem);
+        return EXIT_FAILURE;
+    }
+
+    auto conn = create_conection();
+    if(not consumer_verifing(conn,costumer_key,costumer_secret))
+    {
+        printf ("consumer key/consumer secret no so validos.\n");
         return EXIT_FAILURE;
     }
 
@@ -244,6 +246,7 @@ int main (int argc, char* argv[])
     MHD_stop_daemon (daemon);
     free (key_pem);
     free (cert_pem);
+    mysql_close(conn);
 
     return EXIT_SUCCESS;
 }

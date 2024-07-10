@@ -80,11 +80,15 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-c /etc/httpd/conf/apache-selfsigned.crt -k /etc/httpd/conf/apache-selfsigned.key" />
+				<Option parameters="-c server.pem -k server.key --consumer-key ck_c5a09eaa4635ac885da7a3cb0dbe471e650133d6 --consumer-secret cs_1a3f91683f69bfc35142565ece4667eefb546a7c" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="`pkg-config libmariadb --cflags`" />
 					<Add option="-DOCTETOS_SNOWFLAKE_V0_DEVEL" />
 				</Compiler>
+				<Linker>
+					<Add option="`pkg-config libmariadb --libs`" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -96,7 +100,16 @@
 		<Linker>
 			<Add option="`pkg-config libmicrohttpd --libs`" />
 		</Linker>
+		<Unit filename="ListProducts-mysql.cc">
+			<Option target="ListProductos-dbg" />
+		</Unit>
+		<Unit filename="ListProducts-pages.cc">
+			<Option target="ListProductos-dbg" />
+		</Unit>
 		<Unit filename="ListProducts.cc">
+			<Option target="ListProductos-dbg" />
+		</Unit>
+		<Unit filename="ListProducts.h">
 			<Option target="ListProductos-dbg" />
 		</Unit>
 		<Unit filename="basicauthentication.c">
