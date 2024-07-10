@@ -15,8 +15,6 @@
 #define PORT 8081
 
 #define REALM     "\"Maintenance\""
-#define USER      "a legitimate user azael"
-#define PASSWORD  "and his password"
 
 
 enum class erros_code
