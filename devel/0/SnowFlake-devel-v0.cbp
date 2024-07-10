@@ -80,8 +80,10 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="-c /etc/httpd/conf/apache-selfsigned.crt -k /etc/httpd/conf/apache-selfsigned.key" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DOCTETOS_SNOWFLAKE_V0_DEVEL" />
 				</Compiler>
 			</Target>
 		</Build>

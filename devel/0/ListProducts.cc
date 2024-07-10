@@ -1,36 +1,10 @@
 /* Feel free to use this example code in any way
    you see fit (Public Domain) */
 
-#include <sys/types.h>
-#ifndef _WIN32
-#include <sys/select.h>
-#include <sys/socket.h>
-#else
-#include <winsock2.h>
-#endif
-#include <microhttpd.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-#define PORT 8888
+#include "ListProducts.h"
 
-#define REALM     "\"Maintenance\""
-#define USER      "a legitimate user azael"
-#define PASSWORD  "and his password"
-
-#ifdef CMAKE_BASED
-  #define SERVERKEYFILE "../server.key"
-  #define SERVERCERTFILE "../server.pem"
-#elif defined(CODEBLOCKS)
-  #define SERVERKEYFILE "server.key"
-  #define SERVERCERTFILE "server.pem"
-#else
-  #error "Ambien de Desarrollo desconocido"
-#endif
-
-static char *
-string_to_base64 (const char *message)
+char * string_to_base64 (const char *message)
 {
   const char *lookup =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -66,8 +40,7 @@ string_to_base64 (const char *message)
 }
 
 
-static long
-get_file_size (const char *filename)
+long get_file_size (const char *filename)
 {
   FILE *fp;
 
@@ -88,8 +61,7 @@ get_file_size (const char *filename)
 }
 
 
-static char *
-load_file (const char *filename)
+char * load_file (const char *filename)
 {
   FILE *fp;
   char *buffer;
@@ -122,48 +94,7 @@ load_file (const char *filename)
 }
 
 
-static enum MHD_Result
-ask_for_authentication (struct MHD_Connection *connection, const char *realm)
-{
-  enum MHD_Result ret;
-  struct MHD_Response *response;
-  char *headervalue;
-  size_t slen;
-  const char *strbase = "Basic realm=";
-
-  response = MHD_create_response_from_buffer (0, NULL,
-                                              MHD_RESPMEM_PERSISTENT);
-  if (! response)
-    return MHD_NO;
-
-  slen = strlen (strbase) + strlen (realm) + 1;
-  if (NULL == (headervalue = (char*)malloc (slen)))
-    return MHD_NO;
-  snprintf (headervalue,
-            slen,
-            "%s%s",
-            strbase,
-            realm);
-  ret = MHD_add_response_header (response,
-                                 "WWW-Authenticate",
-                                 headervalue);
-  free (headervalue);
-  if (! ret)
-  {
-    MHD_destroy_response (response);
-    return MHD_NO;
-  }
-
-  ret = MHD_queue_response (connection,
-                            MHD_HTTP_UNAUTHORIZED,
-                            response);
-  MHD_destroy_response (response);
-  return ret;
-}
-
-
-static int
-is_authenticated (struct MHD_Connection *connection,
+int is_authenticated (struct MHD_Connection *connection,
                   const char *username,
                   const char *password)
 {
@@ -191,8 +122,8 @@ is_authenticated (struct MHD_Connection *connection,
             username,
             password);
   expected_b64 = string_to_base64 (expected);
-  printf("Header Value : %s\n", headervalue);
-  printf("Expected : %s\n", expected_b64);
+  //printf("Header Value : %s\n", headervalue);
+  //printf("Expected : %s\n", expected_b64);
   free (expected);
   if (NULL == expected_b64)
     return 0;
@@ -203,60 +134,85 @@ is_authenticated (struct MHD_Connection *connection,
   return authenticated;
 }
 
-
-static enum MHD_Result
-secret_page (struct MHD_Connection *connection)
-{
-  enum MHD_Result ret;
-  struct MHD_Response *response;
-  const char *page = "<html><body>A secret.</body></html>";
-
-  response =
-    MHD_create_response_from_buffer (strlen (page), (void *) page,
-                                     MHD_RESPMEM_PERSISTENT);
-  if (! response)
-    return MHD_NO;
-
-  ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
-  MHD_destroy_response (response);
-
-  return ret;
-}
-
-
-static enum MHD_Result
-answer_to_connection (void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls)
-{
-  (void) cls;               /* Unused. Silent compiler warning. */
-  (void) url;               /* Unused. Silent compiler warning. */
-  (void) version;           /* Unused. Silent compiler warning. */
-  (void) upload_data;       /* Unused. Silent compiler warning. */
-  (void) upload_data_size;  /* Unused. Silent compiler warning. */
-
-  if (0 != strcmp (method, "GET"))
-    return MHD_NO;
-  if (NULL == *con_cls)
-  {
-    *con_cls = connection;
-    return MHD_YES;
-  }
-
-  if (! is_authenticated (connection, USER, PASSWORD))
-    return ask_for_authentication (connection, REALM);
-
-  return secret_page (connection);
-}
-
-
-int
-main (int argc, const char* argv[])
+int main (int argc, char* argv[])
 {
     struct MHD_Daemon *daemon;
     char *key_pem;
     char *cert_pem;
+    char *cs;
+    char *ck;
+    if(argc <= 1)
+    {
+        printf("Uso del comando:\n");
+        printf("\t ListProduct -c path_to_certificate -k path_to_key\n");
+        printf("\t ListProduct --certificate path_to_certificate --key path_to_key\n");
+        return EXIT_FAILURE;
+    }
+
+    for(int i = 0; i < argc; i++)
+    {
+        if(strcmp("-c",argv[i]) == 0 or strcmp("--certificate",argv[i]) == 0)
+        {
+            if(i + 1 < argc) cert_pem = argv[++i];
+            else
+            {
+                printf ("Deve indicar la direccion del certificado\n");
+                return EXIT_FAILURE;
+            }
+        }
+        else if(strcmp("-k",argv[i]) == 0 or strcmp("--key",argv[i]) == 0)
+        {
+            if(i + 1 < argc) key_pem = argv[++i];
+            else
+            {
+                printf ("Deve indicar la direccion de llave\n");
+                return EXIT_FAILURE;
+            }
+        }
+        else if(strcmp("--consumer-key",argv[i]) == 0)
+        {
+            if(i + 1 < argc) ck = argv[++i];
+            else
+            {
+                printf ("Deve indicar la direccion de llave\n");
+                return EXIT_FAILURE;
+            }
+        }
+        else if(strcmp("--consumer-secret",argv[i]) == 0)
+        {
+            if(i + 1 < argc) cs = argv[++i];
+            else
+            {
+                printf ("Deve indicar la direccion de llave\n");
+                return EXIT_FAILURE;
+            }
+        }
+    }
+#if OCTETOS_SNOWFLAKE_V0_DEVEL
+        printf("Certificado path: %s\n",cert_pem);
+        printf("Key path : %s\n",key_pem);
+#endif // OCTETOS_SNOWFLAKE_V1_DEVEL
+
+    if(not cert_pem)
+    {
+        printf("Debe indicar el certificado\n");
+        return EXIT_FAILURE;
+    }
+    if(not key_pem)
+    {
+        printf("Debe indicar la llave del certificado\n");
+        return EXIT_FAILURE;
+    }
+    if(not ck)
+    {
+        printf("Debe indicar la llave de la API\n");
+        return EXIT_FAILURE;
+    }
+    if(not cs)
+    {
+        printf("Debe indicar la contrasena de la API\n");
+        return EXIT_FAILURE;
+    }
 
     key_pem = load_file (SERVERKEYFILE);
     cert_pem = load_file (SERVERCERTFILE);
@@ -266,7 +222,7 @@ main (int argc, const char* argv[])
         printf ("The key/certificate files could not be read.\n");
         if (NULL != key_pem) free (key_pem);
         if (NULL != cert_pem) free (cert_pem);
-        return 1;
+        return EXIT_FAILURE;
     }
 
     daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
@@ -280,7 +236,7 @@ main (int argc, const char* argv[])
         free (key_pem);
         free (cert_pem);
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
     (void) getchar ();
@@ -289,5 +245,5 @@ main (int argc, const char* argv[])
     free (key_pem);
     free (cert_pem);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
