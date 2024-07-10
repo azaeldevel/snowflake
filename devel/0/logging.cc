@@ -134,6 +134,7 @@ bool is_authenticated (struct MHD_Connection *connection)
     if(verify_authentication(conn,headervalue))
     {
         mysql_close(conn);
+        //printf("User : %s",MHD_digest_auth_get_username(connection));
         return true;
     }
 
