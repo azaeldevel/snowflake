@@ -27,10 +27,79 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="hellowbrowser">
+				<Option output="bin/Debug/hellowbrowser" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="basicauthentication">
+				<Option output="bin/Debug/basicauthentication" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="tlsauthentication">
+				<Option output="bin/Debug/tlsauthentication" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DCODEBLOCKS" />
+				</Compiler>
+			</Target>
+			<Target title="check-dbg">
+				<Option output="bin/Debug/check" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="check-r">
+				<Option output="bin/Release/check" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="`pkg-config libmicrohttpd --cflags`" />
 		</Compiler>
+		<Linker>
+			<Add option="`pkg-config libmicrohttpd --libs`" />
+		</Linker>
+		<Unit filename="basicauthentication.c">
+			<Option compilerVar="CC" />
+			<Option target="basicauthentication" />
+		</Unit>
+		<Unit filename="check.c">
+			<Option compilerVar="CC" />
+			<Option target="check-dbg" />
+		</Unit>
+		<Unit filename="hellobrowser.c">
+			<Option compilerVar="CC" />
+			<Option target="hellowbrowser" />
+		</Unit>
+		<Unit filename="tlsauthentication.c">
+			<Option compilerVar="CC" />
+			<Option target="tlsauthentication" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -23,8 +23,8 @@
   #define SERVERKEYFILE "../server.key"
   #define SERVERCERTFILE "../server.pem"
 #elif defined(CODEBLOCKS)
-  #define SERVERKEYFILE "devel/0/server.key"
-  #define SERVERCERTFILE ".devel/0/server.pem"
+  #define SERVERKEYFILE "server.key"
+  #define SERVERCERTFILE "server.pem"
 #else
   #error "Ambien de Desarrollo desconocido"
 #endif
