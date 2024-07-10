@@ -115,6 +115,9 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
 
+    //const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+    //printf("Protocol : %i\n",info->protocol);
+
     if (0 != strcmp (method, "GET"))
     return MHD_NO;
     if (NULL == *con_cls)
@@ -124,10 +127,17 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     }
     pass = NULL;
     user = MHD_basic_auth_get_username_password (connection,&pass);
-    auto mysql = create_conection();
-    fail = not verify_authentication(mysql,user,pass);
-    if (NULL != user) MHD_free (user);
-    if (NULL != pass) MHD_free (pass);
+    if(user and pass)
+    {
+        auto mysql = create_conection();
+        fail = not verify_authentication(mysql,user,pass);
+    }
+    else
+    {
+        fail = true;
+    }
+    if (user) MHD_free (user);
+    if (pass) MHD_free (pass);
     if (fail)
     {
     const char *page = "<html><body>Go away.</body></html>";

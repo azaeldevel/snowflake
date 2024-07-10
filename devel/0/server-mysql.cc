@@ -20,7 +20,7 @@ MYSQL* create_conection()
     }
     if (!mysql_set_character_set(conn, "utf8"))
     {
-        //printf("New client character set: %s\n", mysql_character_set_name(conn));
+        printf("New client character set: %s\n", mysql_character_set_name(conn));
     }
 
     return conn;
@@ -64,7 +64,7 @@ bool verify_authentication(MYSQL* conn,const char* autho)
 bool verify_authentication(MYSQL* conn,const char* u,const char* p)
 {
     const char* sql = "SELECT id FROM User WHERE name = '%s' and pwdtxt = '%s'";
-    size_t sql_z = strlen (sql) - 4 + strlen(u) + strlen(p)  + 1; //strlen ("%s") * 2 = 4
+    size_t sql_z = strlen (sql) - 4 + strlen(u) + strlen(p) + 1; //strlen ("%s") * 2 = 4
     char* newswl = (char*)malloc(sql_z + 1);
     snprintf (newswl,sql_z,sql,u,p);
     //printf("SQL : %s\n",sql);
