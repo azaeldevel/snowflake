@@ -14,10 +14,12 @@ project ("developing")
 # Agregue un origen al ejecutable de este proyecto.
 add_executable (helloword "hellobrowser.c")
 add_executable (simplepost "simplepost.c")
+add_executable (basicauthentication "basicauthentication.c")
+add_executable (tlsauthentication "tlsauthentication.c")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET helloword PROPERTY CXX_STANDARD 20)
-  set_property(TARGET simplepost PROPERTY CXX_STANDARD 20)
+  #set_property(TARGET helloword PROPERTY CXX_STANDARD 20)
 endif()
 
+add_definitions(-DCMAKE_BASED)
 include (packages.cmake)

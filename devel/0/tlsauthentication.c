@@ -16,12 +16,18 @@
 #define PORT 8888
 
 #define REALM     "\"Maintenance\""
-#define USER      "a legitimate user"
+#define USER      "a legitimate user azael"
 #define PASSWORD  "and his password"
 
-#define SERVERKEYFILE "devel/0/server.key"
-#define SERVERCERTFILE "devel/0/server.pem"
-
+#ifdef CMAKE_BASED
+  #define SERVERKEYFILE "../server.key"
+  #define SERVERCERTFILE "../server.pem"
+#elif defined(CODEBLOCKS)
+  #define SERVERKEYFILE "devel/0/server.key"
+  #define SERVERCERTFILE ".devel/0/server.pem"
+#else
+  #error "Ambien de Desarrollo desconocido"
+#endif
 
 static char *
 string_to_base64 (const char *message)
@@ -185,6 +191,8 @@ is_authenticated (struct MHD_Connection *connection,
             username,
             password);
   expected_b64 = string_to_base64 (expected);
+  printf("Header Value : %s\n", headervalue);
+  printf("Expected : %s\n", expected_b64);
   free (expected);
   if (NULL == expected_b64)
     return 0;
