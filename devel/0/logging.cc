@@ -127,8 +127,8 @@ bool is_authenticated (struct MHD_Connection *connection)
     const char *strbase = "Basic ";
 
     headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
-    if (NULL == headervalue) return 0;
-    if (0 != strncmp (headervalue, strbase, strlen (strbase))) return 0;
+    if (NULL == headervalue) return false;
+    if (0 != strncmp (headervalue, strbase, strlen (strbase))) return false;
     printf("Header Value : %s\n", headervalue);
     auto conn = create_conection();
     if(verify_authentication(conn,headervalue))

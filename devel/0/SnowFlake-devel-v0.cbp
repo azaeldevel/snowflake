@@ -95,6 +95,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="-c server.pem -k server.key " />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="`pkg-config libmariadb --cflags`" />
@@ -148,9 +149,6 @@
 			<Option target="logging" />
 		</Unit>
 		<Unit filename="logging.h">
-			<Option target="logging" />
-		</Unit>
-		<Unit filename="loging.h">
 			<Option target="logging" />
 		</Unit>
 		<Unit filename="tlsauthentication.c">
