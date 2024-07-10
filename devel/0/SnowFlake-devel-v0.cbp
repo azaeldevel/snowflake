@@ -90,6 +90,20 @@
 					<Add option="`pkg-config libmariadb --libs`" />
 				</Linker>
 			</Target>
+			<Target title="logging">
+				<Option output="bin/Debug/loging" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`pkg-config libmariadb --cflags`" />
+					<Add option="-DOCTETOS_SNOWFLAKE_V0_DEVEL" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config libmariadb --libs`" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -123,6 +137,21 @@
 		<Unit filename="hellobrowser.c">
 			<Option compilerVar="CC" />
 			<Option target="hellowbrowser" />
+		</Unit>
+		<Unit filename="logging-mysql.cc">
+			<Option target="logging" />
+		</Unit>
+		<Unit filename="logging-pages.cc">
+			<Option target="logging" />
+		</Unit>
+		<Unit filename="logging.cc">
+			<Option target="logging" />
+		</Unit>
+		<Unit filename="logging.h">
+			<Option target="logging" />
+		</Unit>
+		<Unit filename="loging.h">
+			<Option target="logging" />
 		</Unit>
 		<Unit filename="tlsauthentication.c">
 			<Option compilerVar="CC" />
