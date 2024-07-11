@@ -54,6 +54,23 @@ MHD_Result secret_page (struct MHD_Connection *connection)
   return ret;
 }
 
+MHD_Result error_page (MHD_Connection *connection,erros_code)
+{
+    enum MHD_Result ret;
+    MHD_Response *response;
+    const char *page = "<html><body>Error : %i</body></html>";
+
+    response =
+    MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    if (! response) return MHD_NO;
+
+    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    MHD_destroy_response (response);
+
+    return ret;
+}
+
+
 
 MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
@@ -82,31 +99,12 @@ MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connect
     return secret_page (connection);
 }
 
-MHD_Result error_page (MHD_Connection *connection,erros_code)
-{
-    enum MHD_Result ret;
-    MHD_Response *response;
-    const char *page = "<html><body>Error : %i</body></html>";
-
-    response =
-    MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-    if (! response) return MHD_NO;
-
-    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
-    MHD_destroy_response (response);
-
-    return ret;
-}
-
 
 MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls)
 {
-    char *user;
-    char *pass;
-    int fail;
     enum MHD_Result ret;
     struct MHD_Response *response;
     (void) cls;               /* Unused. Silent compiler warning. */
@@ -118,27 +116,14 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     //const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
     //printf("Protocol : %i\n",info->protocol);
 
-    if (0 != strcmp (method, "GET"))
-    return MHD_NO;
+    if (0 != strcmp (method, "GET")) return MHD_NO;
     if (NULL == *con_cls)
     {
         *con_cls = connection;
         return MHD_YES;
     }
-    pass = NULL;
-    user = MHD_basic_auth_get_username_password (connection,&pass);
-    if(user and pass)
-    {
-        auto mysql = create_conection();
-        fail = not verify_authentication(mysql,user,pass);
-    }
-    else
-    {
-        fail = true;
-    }
-    if (user) MHD_free (user);
-    if (pass) MHD_free (pass);
-    if (fail)
+
+    if (is_authenticated_http(connection))
     {
         const char *page = "<html><body>Go away.</body></html>";
         response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);

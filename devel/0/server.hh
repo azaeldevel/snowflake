@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mysql.h>
+#include <map>
 
 #define PORT 8081
 
@@ -26,6 +27,14 @@ enum class erros_code
     not_found_api_key,
     not_found_api_pasword,
 };
+
+struct Resource
+{
+    const char* name_string;
+    size_t name_size;
+    std::map<const char*,Resource*> branck;
+};
+
 
 
 MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm);
@@ -46,6 +55,7 @@ long get_file_size (const char *filename);
 char * load_file (const char *filename);
 int is_authenticated (struct MHD_Connection *connection, const char *username,const char *password);
 bool is_authenticated (struct MHD_Connection *connection);
+bool is_authenticated_http (struct MHD_Connection *connection);
 
 /**
 *\brief Returna una conexion valida a la base de datos

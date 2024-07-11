@@ -141,6 +141,28 @@ bool is_authenticated (struct MHD_Connection *connection)
     mysql_close(conn);
     return false;
 }
+bool is_authenticated_http (struct MHD_Connection *connection)
+{
+    bool fail;
+    char * pass = NULL;
+    char *user = MHD_basic_auth_get_username_password (connection,&pass);
+    if(user and pass)
+    {
+        auto mysql = create_conection();
+        fail = not verify_authentication(mysql,user,pass);
+    }
+    else
+    {
+        fail = true;
+    }
+    if (user) MHD_free (user);
+    if (pass) MHD_free (pass);
+
+    return fail;
+}
+
+
+Resource* root;
 
 int main (int argc, char* argv[])
 {
@@ -156,6 +178,7 @@ int main (int argc, char* argv[])
         printf("\t ListProduct --certificate path_to_certificate --key path_to_key\n");
         return EXIT_FAILURE;
     }*/
+    root = (Resource*)malloc(sizeof(Resource));
 
     for(int i = 1; i < argc; i++)
     {
@@ -223,6 +246,7 @@ int main (int argc, char* argv[])
     MHD_stop_daemon (daemon);
     free (key_pem);
     free (cert_pem);
+    free(root);
 
     return EXIT_SUCCESS;
 }
