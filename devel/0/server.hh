@@ -54,7 +54,7 @@ char * string_to_base64 (const char *message);
 long get_file_size (const char *filename);
 char * load_file (const char *filename);
 int is_authenticated (struct MHD_Connection *connection, const char *username,const char *password);
-bool is_authenticated (struct MHD_Connection *connection);
+bool is_authenticated_https (struct MHD_Connection *connection);
 bool is_authenticated_http (struct MHD_Connection *connection);
 
 /**

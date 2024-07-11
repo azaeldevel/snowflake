@@ -94,7 +94,7 @@ MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connect
     //printf("Protocol : %i\n",info->protocol);
 
 
-    if (! is_authenticated (connection)) return ask_for_authentication (connection, REALM);
+    if (! is_authenticated_https (connection)) return ask_for_authentication (connection, REALM);
 
     return secret_page (connection);
 }

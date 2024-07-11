@@ -121,7 +121,7 @@ int is_authenticated (struct MHD_Connection *connection, const char *username, c
     return authenticated;
 }
 
-bool is_authenticated (struct MHD_Connection *connection)
+bool is_authenticated_https (struct MHD_Connection *connection)
 {
     const char *headervalue;
     const char *strbase = "Basic ";
@@ -129,7 +129,7 @@ bool is_authenticated (struct MHD_Connection *connection)
     headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
     if (NULL == headervalue) return false;
     if (0 != strncmp (headervalue, strbase, strlen (strbase))) return false;
-    printf("Header Value : %s\n", headervalue);
+    //printf("Header Value : %s\n", headervalue);
     auto conn = create_conection();
     if(verify_authentication(conn,headervalue))
     {
