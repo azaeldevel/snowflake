@@ -73,8 +73,8 @@ MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connect
         return MHD_YES;
     }
 
-    const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
-    printf("Protocol : %i\n",info->protocol);
+    //const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+    //printf("Protocol : %i\n",info->protocol);
 
 
     if (! is_authenticated (connection)) return ask_for_authentication (connection, REALM);
@@ -86,7 +86,7 @@ MHD_Result error_page (MHD_Connection *connection,erros_code)
 {
     enum MHD_Result ret;
     MHD_Response *response;
-    const char *page = "<html><body>A secret.</body></html>";
+    const char *page = "<html><body>Error : %i</body></html>";
 
     response =
     MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
@@ -140,21 +140,15 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     if (pass) MHD_free (pass);
     if (fail)
     {
-    const char *page = "<html><body>Go away.</body></html>";
-    response =
-      MHD_create_response_from_buffer (strlen (page), (void *) page,
-                                       MHD_RESPMEM_PERSISTENT);
-    ret = MHD_queue_basic_auth_fail_response (connection,
-                                              "my realm",
-                                              response);
+        const char *page = "<html><body>Go away.</body></html>";
+        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+        ret = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
     }
     else
     {
-    const char *page = "<html><body>A secret.</body></html>";
-    response =
-      MHD_create_response_from_buffer (strlen (page), (void *) page,
-                                       MHD_RESPMEM_PERSISTENT);
-    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
+        const char *page = "<html><body>A secret.</body></html>";
+        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+        ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
     }
 
     MHD_destroy_response (response);

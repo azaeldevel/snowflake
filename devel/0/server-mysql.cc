@@ -20,7 +20,7 @@ MYSQL* create_conection()
     }
     if (!mysql_set_character_set(conn, "utf8"))
     {
-        printf("New client character set: %s\n", mysql_character_set_name(conn));
+        //printf("New client character set: %s\n", mysql_character_set_name(conn));
     }
 
     return conn;
