@@ -176,8 +176,8 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    Resource loging{"loging.html",11};
-    Resource logout{"logout.html",11};
+    Resource loging{"loging",6};
+    Resource logout{"logout",6};
     root.branch.insert(std::pair(loging.name_string,loging));
     root.branch.insert(std::pair(logout.name_string,logout));
 

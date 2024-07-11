@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <mysql.h>
 #include <map>
+#include <string>
 
 #define PORT 8081
 
@@ -33,8 +34,7 @@ struct Resource
 {
     const char* name_string;
     size_t name_size;
-    std::map<const char*,Resource> branch;
-
+    std::map<std::string,Resource> branch;
 };
 
 

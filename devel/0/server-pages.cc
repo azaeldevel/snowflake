@@ -58,8 +58,7 @@ MHD_Result error_page (MHD_Connection *connection)
 {
     enum MHD_Result ret;
     MHD_Response *response;
-    const char *str = "<html><body>Error</body></html>";
-    char *page;
+    const char *page = "<html><body>Error</body></html>";
     response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
     if (! response) return MHD_NO;
     ret = MHD_queue_response (connection, MHD_HTTP_BAD_REQUEST, response);
@@ -123,10 +122,18 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     {
         printf("URL Next : %s\n",next);
         Resource* actual = &root;
+        printf("Map size : %llu\n",actual->branch.size());
+        for(auto const& r : actual->branch)
+        {
+            printf("\tkey : %s\n",r.first);
+            printf("\tvalue : %s\n",r.second.name_string);
+
+        }
         auto itactual = actual->branch.find(next);
         if(itactual != actual->branch.end())
         {
             actual = &(*itactual).second;
+
         }
         else
         {
