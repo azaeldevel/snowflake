@@ -54,17 +54,15 @@ MHD_Result secret_page (struct MHD_Connection *connection)
   return ret;
 }
 
-MHD_Result error_page (MHD_Connection *connection,erros_code)
+MHD_Result error_page (MHD_Connection *connection)
 {
     enum MHD_Result ret;
     MHD_Response *response;
-    const char *page = "<html><body>Error : %i</body></html>";
-
-    response =
-    MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    const char *str = "<html><body>Error</body></html>";
+    char *page;
+    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
     if (! response) return MHD_NO;
-
-    ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    ret = MHD_queue_response (connection, MHD_HTTP_BAD_REQUEST, response);
     MHD_destroy_response (response);
 
     return ret;
@@ -82,6 +80,12 @@ MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connect
     (void) version;           /* Unused. Silent compiler warning. */
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
+
+    //printf("URL : %s\n",url);
+    const char* next = next_resource(url,url);
+    //printf("URL Next : %s\n",next);
+    //Resource* actual = &root;
+    //actual->branch.find();
 
     if (0 != strcmp (method, "GET")) return MHD_NO;
     if (NULL == *con_cls)
@@ -112,6 +116,24 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     (void) version;           /* Unused. Silent compiler warning. */
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
+
+    //printf("URL : %s\n",url);
+    const char* next = next_resource(url,url);
+    if(next)
+    {
+        printf("URL Next : %s\n",next);
+        Resource* actual = &root;
+        auto itactual = actual->branch.find(next);
+        if(itactual != actual->branch.end())
+        {
+            actual = &(*itactual).second;
+        }
+        else
+        {
+            actual = NULL;
+            return error_page(connection);
+        }
+    }
 
     //const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
     //printf("Protocol : %i\n",info->protocol);

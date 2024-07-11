@@ -161,9 +161,6 @@ bool is_authenticated_http (struct MHD_Connection *connection)
     return fail;
 }
 
-
-Resource* root;
-
 int main (int argc, char* argv[])
 {
     struct MHD_Daemon *daemon;
@@ -177,8 +174,13 @@ int main (int argc, char* argv[])
         printf("\t ListProduct -c path_to_certificate -k path_to_key\n");
         printf("\t ListProduct --certificate path_to_certificate --key path_to_key\n");
         return EXIT_FAILURE;
-    }*/
-    root = (Resource*)malloc(sizeof(Resource));
+    }
+    */
+    Resource loging{"loging.html",11};
+    Resource logout{"logout.html",11};
+    root.branch.insert(std::pair(loging.name_string,loging));
+    root.branch.insert(std::pair(logout.name_string,logout));
+
 
     for(int i = 1; i < argc; i++)
     {
@@ -246,7 +248,25 @@ int main (int argc, char* argv[])
     MHD_stop_daemon (daemon);
     free (key_pem);
     free (cert_pem);
-    free(root);
 
     return EXIT_SUCCESS;
+}
+
+const char* next_resource(const char* string,const char* begin)
+{
+    size_t offset = string - begin;
+    //printf("offset : %i\n",offset);
+    size_t length = strlen(string);
+
+    //el final del actual resource
+    size_t actual;
+    for(actual = offset; actual < length; actual++)
+    {
+        if(string[actual] == '/') break;
+    }
+    //
+    if(string[actual + 1] == '\0') return NULL;//si se apunta al final de la cadena
+    if(actual - length - 1 == 0) return NULL;//si se apunta al final de la cadena
+
+    return &string[actual + 1];
 }

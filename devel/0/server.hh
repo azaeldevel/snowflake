@@ -26,14 +26,20 @@ enum class erros_code
     not_found_certificate_key,
     not_found_api_key,
     not_found_api_pasword,
+    unknow_resource,
 };
 
 struct Resource
 {
     const char* name_string;
     size_t name_size;
-    std::map<const char*,Resource*> branck;
+    std::map<const char*,Resource> branch;
+
 };
+
+
+static Resource root;
+
 
 
 
@@ -47,7 +53,7 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
-MHD_Result error_page (MHD_Connection *connection,erros_code);
+MHD_Result error_page (MHD_Connection *connection);
 
 
 char * string_to_base64 (const char *message);
@@ -69,3 +75,10 @@ bool verify_authentication(MYSQL*,const char* autho);
 *\brief Verifica
 */
 bool verify_authentication(MYSQL*,const char* u,const char* p);
+
+
+/**
+*\brief Busca el siguiente recource en 'string' comenzando en 'begin'. Todos los slash son ignorado.
+*\return si hay un siguiente resource return la un puntero a la primer posicion de otra forma returna NULL
+*/
+const char* next_resource(const char* string,const char* begin);
