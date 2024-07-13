@@ -12,7 +12,7 @@ endif()
 project ("developing")
 
 # Agregue un origen al ejecutable de este proyecto.
-add_executable (helloword "hellobrowser.c")
+add_executable (hellobrowser "hellobrowser.c")
 add_executable (simplepost "simplepost.c")
 add_executable (basicauthentication "basicauthentication.c")
 add_executable (tlsauthentication "tlsauthentication.c")
@@ -22,4 +22,13 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 add_definitions(-DCMAKE_BASED)
-include (packages.cmake)
+#include (packages.cmake)
+##shoul run vcpkg install to build the tree installed
+target_link_libraries(hellobrowser "vcpkg_installed/x64-windows/lib/libmicrohttpd-dll")
+target_include_directories(hellobrowser PUBLIC "vcpkg_installed/x64-windows/include")
+target_link_libraries(simplepost "vcpkg_installed/x64-windows/lib/libmicrohttpd-dll")
+target_include_directories(simplepost PUBLIC "vcpkg_installed/x64-windows/include")
+target_link_libraries(basicauthentication "vcpkg_installed/x64-windows/lib/libmicrohttpd-dll")
+target_include_directories(basicauthentication PUBLIC "vcpkg_installed/x64-windows/include")
+target_link_libraries(tlsauthentication "vcpkg_installed/x64-windows/lib/libmicrohttpd-dll")
+target_include_directories(tlsauthentication PUBLIC "vcpkg_installed/x64-windows/include")

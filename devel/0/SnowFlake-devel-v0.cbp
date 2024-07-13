@@ -128,6 +128,15 @@
 					<Add option="`pkg-config libmariadb --libs`" />
 				</Linker>
 			</Target>
+			<Target title="exercise">
+				<Option output="bin/Debug/SnowFlake-devel-v0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -157,6 +166,10 @@
 		<Unit filename="check.c">
 			<Option compilerVar="CC" />
 			<Option target="check-dbg" />
+		</Unit>
+		<Unit filename="exercise.c">
+			<Option compilerVar="CC" />
+			<Option target="exercise" />
 		</Unit>
 		<Unit filename="hellobrowser.c">
 			<Option compilerVar="CC" />
