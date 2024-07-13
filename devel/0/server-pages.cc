@@ -2,6 +2,7 @@
    you see fit (Public Domain) */
 
 #include "server.hh"
+//extern Resource root;
 
 MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm)
 {
@@ -126,14 +127,12 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
         for(auto const& r : actual->branch)
         {
             printf("\tkey : %s\n",r.first);
-            printf("\tvalue : %s\n",r.second.name_string);
-
+            //printf("\tvalue : %s\n",r.second.name_string);
         }
         auto itactual = actual->branch.find(next);
         if(itactual != actual->branch.end())
         {
             actual = &(*itactual).second;
-
         }
         else
         {

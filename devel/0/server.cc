@@ -3,6 +3,7 @@
 
 
 #include "server.hh"
+Resource root{"/",1};
 
 char * string_to_base64 (const char *message)
 {
@@ -180,7 +181,13 @@ int main (int argc, char* argv[])
     Resource logout{"logout",6};
     root.branch.insert(std::pair(loging.name_string,loging));
     root.branch.insert(std::pair(logout.name_string,logout));
+    printf("Map size : %llu\n",root.branch.size());
 
+    /*for(auto const& r : root.branch)
+    {
+        printf("\tkey : %s\n",r.first.c_str());
+        printf("\tvalue : %s\n",r.second.name_string);
+    }*/
 
     for(int i = 1; i < argc; i++)
     {

@@ -38,7 +38,7 @@ struct Resource
 };
 
 
-static Resource root;
+extern Resource root;
 
 
 
