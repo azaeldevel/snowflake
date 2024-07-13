@@ -229,7 +229,7 @@ int main (int argc, char* argv[])
     if (key_pem and cert_pem)
     {//running https protocol
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
-                      NULL, &answer_to_connection_https, NULL,
+                      NULL, &answer_connection, NULL,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
                       MHD_OPTION_HTTPS_MEM_CERT, cert_pem, MHD_OPTION_END);
     }

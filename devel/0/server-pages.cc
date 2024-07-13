@@ -213,25 +213,42 @@ MHD_Result default_page(MHD_Connection* connection)
 {
     struct MHD_Response *response;
     MHD_Result result;
+    const char *page = "<html><body>home</body></html>";
 
     if(root.identify)
     {
-        if (is_authenticated_http(connection))
+        const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+        if(info)
         {
-            const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
-            response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-            result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
+            if (not is_authenticated_https(connection))
+            {
+                const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
+                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
+            }
+            else
+            {
+                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+                result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+            }
         }
         else
         {
-            const char *page = "<html><body>home</body></html>";
-            response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-            result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+            if (not is_authenticated_http(connection))
+            {
+                const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
+                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
+            }
+            else
+            {
+                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+                result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+            }
         }
     }
     else
     {
-        const char *page = "<html><body>home</body></html>";
         response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
         result = MHD_queue_response (connection, MHD_HTTP_OK, response);
     }
