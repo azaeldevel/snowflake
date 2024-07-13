@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef _linux_
+#if defined linux
     #include <mysql.h>
 #elif defined(MSYS2)
     #include <mysql/mysql.h>
@@ -38,7 +38,7 @@ enum class erros_code
 
 struct Resource
 {
-    const char* name_string;
+    std::string name_string;
     size_t name_size;
     std::map<std::string,Resource> branch;
 };

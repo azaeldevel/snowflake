@@ -3,7 +3,7 @@
 
 
 #include "server.hh"
-Resource root{"/",1};
+Resource root;
 
 char * string_to_base64 (const char *message)
 {

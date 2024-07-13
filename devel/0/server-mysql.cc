@@ -2,7 +2,6 @@
    you see fit (Public Domain) */
 
 #include "server.hh"
-//extern Resource root;
 
 MYSQL* create_conection()
 {
