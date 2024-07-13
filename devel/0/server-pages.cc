@@ -220,30 +220,27 @@ MHD_Result default_page(MHD_Connection* connection)
         const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
         if(info)
         {
-            if (not is_authenticated_https(connection))
-            {
-                const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
-                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
-            }
-            else
+            if (is_authenticated_https(connection))
             {
                 response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
                 result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+            }
+            else
+            {
+                return ask_for_authentication(connection,REALM);
             }
         }
         else
         {
-            if (not is_authenticated_http(connection))
-            {
-                const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
-                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
-            }
-            else
+            if (is_authenticated_http(connection))
             {
                 response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
                 result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+            }
+            else
+            {
+                response =  MHD_create_response_from_buffer (strlen (page), (void *) page,MHD_RESPMEM_PERSISTENT);
+                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
             }
         }
     }

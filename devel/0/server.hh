@@ -88,50 +88,10 @@ struct Resource
 
     std::map<std::string,Resource> branch;
 
-
-
-    /**
-    *\brief El recurso se va a contruir a partir de callback
-    **/
-    void from(MHD_AccessHandlerCallback);
-    /**
-    *\brief El recurso se va a contruir a partir de un buffer
-    **/
-    void from(const char*);
-    /**
-    *\brief El recurso se va a contruir a partir de un buffer externo
-    **/
-    void from(const char**);
-    /**
-    *\brief El recurso se va a contruir a partir de un callback
-    **/
-    void from(MHD_Result* (*)(MHD_Connection*));
-    /**
-    *\brief El recurso se va a contruir a partir de un callback
-    **/
-    void from(MHD_Result* (*)(MHD_Connection*,const char*));
-
-    /**
-    *\brief El recurso se va a contruir a partir de un callback
-    **/
-    MHD_Response* build(const char**);
-
-
     /**
     *\brief El recurso se va a contruir a partir de un callback
     **/
     MHD_Result reply(MHD_Connection*);
-
-
-    /**
-    *\brief El recurso se va a contruir a partir de un callback
-    **/
-    MHD_Result reply(MHD_Connection*,const char**);
-
-    /**
-    *\brief El recurso se va a contruir a partir de un callback
-    **/
-    MHD_Result reply(MHD_Connection*,MHD_Result (*)(MHD_Connection*));
 
 };
 
