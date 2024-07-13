@@ -36,11 +36,103 @@ enum class erros_code
     unknow_resource,
 };
 
+enum class container_type
+{
+    none,
+    buffer,
+    callback,
+    buffer_external,
+
+    callback_external,
+};
+
+typedef MHD_Result (*external)(MHD_Connection*) ;
+MHD_Result default_page(MHD_Connection* connection);
+
+/**
+*\brief Representa un Recurso en la URL
+**/
 struct Resource
 {
+    Resource() = default;
+    ~Resource();
+    /**
+    *\brief Nombre del recurso
+    **/
     std::string name_string;
-    size_t name_size;
+
+    /**
+    *\brief su uso depende de la utima llada a la funcion que lo asigna(from(...))
+    *\private
+    **/
+    void* container;
+
+    /**
+    *\brief su uso depende de la utima llada a la funcion que lo asigna(from(...))
+    *\private
+    **/
+    size_t container_size;
+
+
+    /**
+    *\brief su uso depende de la utima llada a la funcion que lo asigna(from(...))
+    *\private
+    **/
+    container_type type;
+
+    /**
+    *\brief Requiere que se identifique el cliente
+    *\private
+    **/
+    bool identify;
+
     std::map<std::string,Resource> branch;
+
+
+
+    /**
+    *\brief El recurso se va a contruir a partir de callback
+    **/
+    void from(MHD_AccessHandlerCallback);
+    /**
+    *\brief El recurso se va a contruir a partir de un buffer
+    **/
+    void from(const char*);
+    /**
+    *\brief El recurso se va a contruir a partir de un buffer externo
+    **/
+    void from(const char**);
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    void from(MHD_Result* (*)(MHD_Connection*));
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    void from(MHD_Result* (*)(MHD_Connection*,const char*));
+
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    MHD_Response* build(const char**);
+
+
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    MHD_Result reply(MHD_Connection*);
+
+
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    MHD_Result reply(MHD_Connection*,const char**);
+
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    MHD_Result reply(MHD_Connection*,MHD_Result (*)(MHD_Connection*));
+
 };
 
 
@@ -56,6 +148,10 @@ MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connect
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
 MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);

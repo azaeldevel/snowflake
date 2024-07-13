@@ -166,3 +166,76 @@ MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connecti
     MHD_destroy_response (response);
     return ret;
 }
+
+
+MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls)
+{
+    enum MHD_Result result;
+    (void) cls;               /* Unused. Silent compiler warning. */
+    (void) url;               /* Unused. Silent compiler warning. */
+    (void) version;           /* Unused. Silent compiler warning. */
+    (void) upload_data;       /* Unused. Silent compiler warning. */
+    (void) upload_data_size;  /* Unused. Silent compiler warning. */
+
+    //printf("URL : %s\n",url);
+    const char* next = next_resource(url,url);
+    if(next)
+    {
+        printf("URL Next : %s\n",next);
+        Resource* actual = &root;
+        printf("Map size : %llu\n",actual->branch.size());
+        for(auto const& r : actual->branch)
+        {
+            printf("\tkey : %s\n",r.first.c_str());
+            printf("\tvalue : %s\n",r.second.name_string.c_str());
+        }
+        auto itactual = actual->branch.find(next);
+        if(itactual != actual->branch.end())
+        {
+            actual = &(*itactual).second;
+            return actual->reply(connection);
+        }
+        else
+        {
+            actual = NULL;
+            return error_page(connection);
+        }
+    }
+
+    return default_page(connection);
+}
+
+
+MHD_Result default_page(MHD_Connection* connection)
+{
+    struct MHD_Response *response;
+    MHD_Result result;
+
+    if(root.identify)
+    {
+        if (is_authenticated_http(connection))
+        {
+            const char *page = "<html><body>El acceso no ha sido autorizado</body></html>";
+            response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+            result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
+        }
+        else
+        {
+            const char *page = "<html><body>home</body></html>";
+            response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+            result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+        }
+    }
+    else
+    {
+        const char *page = "<html><body>home</body></html>";
+        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    }
+
+    MHD_destroy_response (response);
+    return result;
+}

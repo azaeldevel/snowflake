@@ -3,7 +3,7 @@
 
 
 #include "server.hh"
-Resource root;
+Resource root{"/",NULL,0,container_type::callback_external,true};
 
 char * string_to_base64 (const char *message)
 {
@@ -177,8 +177,8 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    Resource loging{"loging",6};
-    Resource logout{"logout",6};
+    Resource loging{"loging",NULL,0,container_type::none,true};
+    Resource logout{"logout",NULL,0,container_type::none,true};
     root.branch.insert(std::pair(loging.name_string,loging));
     root.branch.insert(std::pair(logout.name_string,logout));
     printf("Map size : %llu\n",root.branch.size());
@@ -236,7 +236,7 @@ int main (int argc, char* argv[])
     else
     {//running http protocol
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, PORT, NULL, NULL,
-                             &answer_to_connection_http, NULL, MHD_OPTION_END);
+                             &answer_connection, NULL, MHD_OPTION_END);
     }
 
 
@@ -276,4 +276,33 @@ const char* next_resource(const char* string,const char* begin)
     if(actual - length - 1 == 0) return NULL;//si se apunta al final de la cadena
 
     return &string[actual + 1];
+}
+
+
+
+Resource::~Resource()
+{
+    if(type == container_type::buffer)
+    {
+        if(container)
+        {
+            free(container);
+            container = NULL;
+        }
+    }
+}
+
+MHD_Result Resource::reply(MHD_Connection* conn)
+{
+    external call = (external) container;
+    switch(type)
+    {
+    case container_type::callback_external:
+        return call(conn);
+        break;
+    default:
+        return default_page(conn);
+    }
+
+    return default_page(conn);
 }
