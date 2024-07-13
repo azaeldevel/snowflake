@@ -144,22 +144,22 @@ bool is_authenticated_https (struct MHD_Connection *connection)
 }
 bool is_authenticated_http (struct MHD_Connection *connection)
 {
-    bool fail;
+    bool check;
     char * pass = NULL;
     char *user = MHD_basic_auth_get_username_password (connection,&pass);
     if(user and pass)
     {
         auto mysql = create_conection();
-        fail = not verify_authentication(mysql,user,pass);
+        check = verify_authentication(mysql,user,pass);
     }
     else
     {
-        fail = true;
+        check = false;
     }
     if (user) MHD_free (user);
     if (pass) MHD_free (pass);
 
-    return fail;
+    return check;
 }
 
 int main (int argc, char* argv[])
