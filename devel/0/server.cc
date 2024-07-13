@@ -228,6 +228,7 @@ int main (int argc, char* argv[])
 
     if (key_pem and cert_pem)
     {//running https protocol
+        printf("Running SSL server...\n");
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
                       NULL, &answer_connection, NULL,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,

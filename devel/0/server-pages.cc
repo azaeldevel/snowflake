@@ -34,6 +34,30 @@ MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char
 
     return ret;
 }
+MHD_Result ask_for_authentication (struct MHD_Connection *connection)
+{
+    char *user;
+    char *pass;
+    pass = NULL;
+    user = MHD_basic_auth_get_username_password (connection,&pass);
+    if(user)
+    {
+        MYSQL* conn = create_conection();
+        if(verify_authentication(conn,user,pass))
+        {
+            mysql_close(conn);
+            return default_page(connection);
+        }
+    }
+
+    MHD_Result result;
+    MHD_Response *response;
+    const char *page = "<html><body><h1>401 Unauthorized Access</h1></body></html>";
+    response =  MHD_create_response_from_buffer (strlen (page), (void *) page,MHD_RESPMEM_PERSISTENT);
+    result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
+    MHD_destroy_response (response);
+    return result;
+}
 
 
 MHD_Result secret_page (struct MHD_Connection *connection)
@@ -196,11 +220,39 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
         if(itactual != actual->branch.end())
         {
             actual = &(*itactual).second;
-            return actual->reply(connection);
+            if(root.identify)
+            {
+                const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+                if(info)
+                {
+                    if (is_authenticated_https(connection))
+                    {
+                        return actual->reply(connection);
+                    }
+                    else
+                    {
+                        return ask_for_authentication(connection,REALM);
+                    }
+                }
+                else
+                {
+                    if (is_authenticated_http(connection))
+                    {
+                        return actual->reply(connection);
+                    }
+                    else
+                    {
+                        return ask_for_authentication(connection);
+                    }
+                }
+            }
+            else
+            {
+                return actual->reply(connection);
+            }
         }
         else
         {
-            actual = NULL;
             return error_page(connection);
         }
     }
@@ -215,41 +267,35 @@ MHD_Result default_page(MHD_Connection* connection)
     MHD_Result result;
     const char *page = "<html><body>home</body></html>";
 
-    if(root.identify)
-    {
-        const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
-        if(info)
-        {
-            if (is_authenticated_https(connection))
-            {
-                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-                result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-            }
-            else
-            {
-                return ask_for_authentication(connection,REALM);
-            }
-        }
-        else
-        {
-            if (is_authenticated_http(connection))
-            {
-                response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-                result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-            }
-            else
-            {
-                response =  MHD_create_response_from_buffer (strlen (page), (void *) page,MHD_RESPMEM_PERSISTENT);
-                result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
-            }
-        }
-    }
-    else
-    {
-        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-    }
+    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    result = MHD_queue_response (connection, MHD_HTTP_OK, response);
 
     MHD_destroy_response (response);
     return result;
 }
+
+MHD_Result unauthorized_access (MHD_Connection *connection)
+{
+    struct MHD_Response *response;
+    MHD_Result result;
+    const char *page = "<html><body><h1>401 Unauthorized Access</h1></body></html>";
+
+    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+
+    MHD_destroy_response (response);
+    return result;
+}
+MHD_Result unknow_resource (MHD_Connection *connection)
+{
+    struct MHD_Response *response;
+    MHD_Result result;
+    const char *page = "<html><body><h1>404 Not Found Resource</h1></body></html>";
+
+    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+
+    MHD_destroy_response (response);
+    return result;
+}
+

@@ -100,8 +100,14 @@ extern Resource root;
 
 
 
-
+/**
+*\brief Requiere autentificacion para servidor SSL
+**/
 MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm);
+/**
+*\brief Requiere autentificacion para servidor no-SSL
+**/
+MHD_Result ask_for_authentication (struct MHD_Connection *connection);
 MHD_Result secret_page (struct MHD_Connection *connection);
 MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
@@ -116,6 +122,8 @@ MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
 MHD_Result error_page (MHD_Connection *connection);
+MHD_Result unauthorized_access (MHD_Connection *connection);
+MHD_Result unknow_resource (MHD_Connection *connection);
 
 
 char * string_to_base64 (const char *message);
