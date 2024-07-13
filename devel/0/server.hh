@@ -10,7 +10,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <mysql.h>
+#ifdef _linux_
+    #include <mysql.h>
+#elif defined(MSYS2)
+    #include <mysql/mysql.h>
+#else
+
+#endif
 #include <map>
 #include <string>
 
