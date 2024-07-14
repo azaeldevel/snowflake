@@ -50,8 +50,18 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
     printf("Conecion: %llu\n" , (void*)connection);
 
-    printf("URL : %s",url);
-    Resource* actual = NULL;
+    //if (0 != strcmp (method, "GET"))
+    //return MHD_NO;
+    printf("URL : '%s'\n",url);
+    if (NULL == *con_cls)
+    {
+        *con_cls = connection;
+        return MHD_YES;
+    }
+
+    printf("URL : %s\n",url);
+    Resource* actual = Resource::find(url);
+    if(not actual) return unknow_resource(connection);
     const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
     if(info)
     {
@@ -61,33 +71,37 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
             printf("autorizacion requerida..\n");
             if (is_authenticated_https(connection))
             {
+                printf("\tautorizado..\n");
                 return actual->reply(connection);
             }
             else
             {
+                printf("\tno autorizado..\n");
                 return unauthorized_access(connection);
             }
         }
         else
         {
-                    printf("no autorizacion requerida..\n");
-                    return actual->reply(connection);
+            printf("no autorizacion requerida..\n");
+            return actual->reply(connection);
         }
     }
     else
     {
-                printf("no SSL..\n");
-                if(actual->identify)
-                {
-                    if (is_authenticated_http(connection))
-                    {
-                        return actual->reply(connection);
-                    }
-                    else
-                    {
-                        return unauthorized_access(connection);
-                    }
-                }
+        printf("no SSL..\n");
+        if(actual->identify)
+        {
+            if (is_authenticated_http(connection))
+            {
+                printf("\tautorizado..\n");
+                return actual->reply(connection);
+            }
+            else
+            {
+                printf("\tno autorizado..\n");
+                return unauthorized_access(connection);
+            }
+        }
     }
 
 
@@ -178,6 +192,10 @@ MHD_Result default_loging(MHD_Connection* connection)
             root.branch.insert(std::pair(logout.name_string,logout));
             return ask_for_authentication(connection,REALM);
         }
+        else
+        {
+            return default_page(connection);
+        }
     }
     else
     {
@@ -186,6 +204,10 @@ MHD_Result default_loging(MHD_Connection* connection)
             Resource logout("logout",default_logout,true);
             root.branch.insert(std::pair(logout.name_string,logout));
             return ask_for_authentication(connection,REALM);
+        }
+        else
+        {
+            return default_page(connection);
         }
     }
 

@@ -99,7 +99,7 @@ MHD_Result ask_for_authentication (struct MHD_Connection *connection)
 
 bool is_authenticated_https (struct MHD_Connection *connection)
 {
-    printf("\tbEl usuario es ta autentificado?\n");
+    printf("\tEl usuario esta autentificado?\n");
     const char *headervalue;
     const char *strbase = "Basic ";
 
@@ -122,7 +122,7 @@ bool is_authenticated_https (struct MHD_Connection *connection)
 }
 bool is_authenticated_http (struct MHD_Connection *connection)
 {
-    printf("\tbEl usuario es ta autentificado?\n");
+    printf("\tEl usuario esta autentificado?\n");
     bool check;
     char * pass = NULL;
     char *user = MHD_basic_auth_get_username_password (connection,&pass);

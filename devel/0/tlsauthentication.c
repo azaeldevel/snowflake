@@ -228,8 +228,11 @@ answer_to_connection (void *cls, struct MHD_Connection *connection,
   (void) upload_data;       /* Unused. Silent compiler warning. */
   (void) upload_data_size;  /* Unused. Silent compiler warning. */
 
+  printf("URL : '%s'\n",url);
+
   if (0 != strcmp (method, "GET"))
     return MHD_NO;
+    printf("URL : '%s'\n",url);
   if (NULL == *con_cls)
   {
     *con_cls = connection;

@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    Resource favicon("favicon.ico",favicon_request,false);
+    Resource favicon("favicon.ico",&favicon_request,false);
     root.branch.insert(std::pair(favicon.name_string,favicon));
 
 

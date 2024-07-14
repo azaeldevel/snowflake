@@ -59,6 +59,5 @@ int main (int argc, char* argv[])
     else printf("'/prueba2/prueba26' : no enconctrada\n");
 
 
-
     return EXIT_SUCCESS;
 }
