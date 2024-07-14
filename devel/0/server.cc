@@ -100,24 +100,26 @@ int main (int argc, char* argv[])
     Resource favicon("favicon.ico",&favicon_request,false);
     root.branch.insert(std::pair(favicon.name_string,favicon));
 
-
     Resource loging("loging",default_loging,false);
     Resource prueba1("prueba1",default_page,true);
     Resource prueba2("prueba2",default_page,true);
-    //Resource prueba21("prueba21",default_page,true);
-    //Resource prueba22("prueba22",default_page,true);
+    Resource prueba21("prueba21",default_page,true);
+    Resource prueba22("prueba22",default_page,true);
     root.branch.insert(std::pair(loging.name_string,loging));
-    root.branch.insert(std::pair(prueba1.name_string,prueba1));
+    prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
+    prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
+
     root.branch.insert(std::pair(prueba2.name_string,prueba2));
     //prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     //prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
-    printf("Map size : %llu\n",root.branch.size());
-
-    /*for(auto const& r : root.branch)
+    //printf("Map size : %llu\n",root.branch.size());
+    /*
+    for(auto const& r : root.branch)
     {
         printf("\tkey : %s\n",r.first.c_str());
         printf("\tvalue : %s\n",r.second.name_string);
-    }*/
+    }
+    */
 
     for(int i = 1; i < argc; i++)
     {
@@ -160,14 +162,14 @@ int main (int argc, char* argv[])
     {//running https protocol
         printf("Running SSL server...\n");
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
-                      NULL, &answer_connection, NULL,
+                      NULL, &answer_connection_https, NULL,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
                       MHD_OPTION_HTTPS_MEM_CERT, cert_pem, MHD_OPTION_END);
     }
     else
     {//running http protocol
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, PORT, NULL, NULL,
-                             &answer_connection, NULL, MHD_OPTION_END);
+                             &answer_connection_http, NULL, MHD_OPTION_END);
     }
 
 
