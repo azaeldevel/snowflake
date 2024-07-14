@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    Resource favicon("favicon.ico",&favicon_request,false);
+    Resource favicon("favicon.ico",favicon_request,false);
     root.branch.insert(std::pair(favicon.name_string,favicon));
 
     Resource loging("loging",default_loging,false);
@@ -105,21 +105,21 @@ int main (int argc, char* argv[])
     Resource prueba2("prueba2",default_page,true);
     Resource prueba21("prueba21",default_page,true);
     Resource prueba22("prueba22",default_page,true);
+
     root.branch.insert(std::pair(loging.name_string,loging));
     prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
-
+    root.branch.insert(std::pair(prueba1.name_string,prueba1));
     root.branch.insert(std::pair(prueba2.name_string,prueba2));
     //prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     //prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
     //printf("Map size : %llu\n",root.branch.size());
-    /*
     for(auto const& r : root.branch)
     {
         printf("\tkey : %s\n",r.first.c_str());
-        printf("\tvalue : %s\n",r.second.name_string);
+        printf("\t\tvalue : %s\n",r.second.name_string.c_str());
+        printf("\t\tsize: %llu\n",r.second.branch.size());
     }
-    */
 
     for(int i = 1; i < argc; i++)
     {

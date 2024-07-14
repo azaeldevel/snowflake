@@ -62,7 +62,7 @@ Resource* Resource::find(const std::vector<std::string>& rcs)
     if(it != root.branch.end())
     {
         //printf("\nResource : '%s'\n",(*it).first.c_str());
-        if(rcs.size() > 1)
+        if(1 < rcs.size())
         {
             return ((*it).second.find(rcs, 1));
         }
@@ -76,7 +76,7 @@ Resource* Resource::find(const std::vector<std::string>& rcs)
 }
 Resource* Resource::find(const std::vector<std::string>& rcs,size_t index)
 {
-    if(index >= rcs.size()) return NULL;
+    //if(index >= rcs.size()) return NULL;
     /*printf("\t'%llu'-> '%s'\n",index,rcs[index].c_str());
     printf("\tmap size : '%llu\n",branch.size());
     for(auto const& r : branch)
@@ -87,9 +87,9 @@ Resource* Resource::find(const std::vector<std::string>& rcs,size_t index)
     auto it = branch.find(rcs[index]);
     if(it != branch.end())
     {
-        //printf("\nResource : '%s'\n",(*it).first.c_str());
+        //printf("\tResource : '%s'\n",(*it).first.c_str());
         //printf("\tstring : '%s'\n",(*it).first.c_str());
-        if(index < rcs.size())
+        if(index + 1 < rcs.size())
         {
             return ((*it).second.find(rcs, index + 1));
         }

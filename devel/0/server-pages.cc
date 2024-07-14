@@ -76,6 +76,11 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
             return unauthorized_access(connection);
         }
     }
+    else
+    {
+        printf("no autorizacion requerida..\n");
+        return actual->reply(connection);
+    }
 
     return default_page(connection);
 }
@@ -224,7 +229,7 @@ MHD_Result default_loging(MHD_Connection* connection)
         {
             Resource logout("logout",default_logout,true);
             root.branch.insert(std::pair(logout.name_string,logout));
-            return ask_for_authentication(connection,REALM);
+            return ask_for_authentication(connection);
         }
         else
         {

@@ -128,6 +128,7 @@ bool is_authenticated_http (struct MHD_Connection *connection)
     char *user = MHD_basic_auth_get_username_password (connection,&pass);
     if(user and pass)
     {
+        printf("\t\tUser : '%s'\n\tPassword : '%s'\n",user,pass);
         auto mysql = create_conection();
         check = verify_authentication(mysql,user,pass);
         if(check) printf("\t\tSi\n");
