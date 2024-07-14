@@ -224,6 +224,9 @@
 			<Option target="server" />
 			<Option target="server_find_resource" />
 		</Unit>
+		<Unit filename="server-utils.cc">
+			<Option target="server" />
+		</Unit>
 		<Unit filename="server.cc">
 			<Option target="server" />
 		</Unit>

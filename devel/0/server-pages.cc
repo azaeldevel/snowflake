@@ -48,37 +48,37 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     (void) version;           /* Unused. Silent compiler warning. */
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
-    printf("Conecion: %llu\n" , (void*)connection);
+    //printf("Conecion: %llu\n" , (void*)connection);
 
     //if (0 != strcmp (method, "GET"))
     //return MHD_NO;
-    printf("URL : '%s'\n",url);
+    //printf("URL : '%s'\n",url);
     if (NULL == *con_cls)
     {
         *con_cls = connection;
         return MHD_YES;
     }
 
-    printf("URL : %s\n",url);
+    //printf("URL : %s\n",url);
     Resource* actual = Resource::find(url);
     if(not actual) return unknow_resource(connection);
-    printf("no SSL..\n");
+    //printf("no SSL..\n");
     if(actual->identify)
     {
         if (is_authenticated_http(connection))
         {
-            printf("\tautorizado..\n");
+            //printf("\tautorizado..\n");
             return actual->reply(connection);
         }
         else
         {
-            printf("\tno autorizado..\n");
+            //printf("\tno autorizado..\n");
             return unauthorized_access(connection);
         }
     }
     else
     {
-        printf("no autorizacion requerida..\n");
+        //printf("no autorizacion requerida..\n");
         return actual->reply(connection);
     }
 
@@ -98,36 +98,36 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     (void) version;           /* Unused. Silent compiler warning. */
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
-    printf("Conexion: %llu\n" , (void*)connection);
+    //printf("Conexion: %llu\n" , (void*)connection);
 
     //if(0 != strcmp (method, "GET")) return MHD_NO;
-    printf("URL : '%s'\n",url);
+    //printf("URL : '%s'\n",url);
     if (NULL == *con_cls)
     {
         *con_cls = connection;
         return MHD_YES;
     }
 
-    printf("URL : %s\n",url);
+    //printf("URL : %s\n",url);
     Resource* actual = Resource::find(url);
-    printf("SSL detected..\n");
+    //printf("SSL detected..\n");
     if(actual->identify)
     {
-        printf("autorizacion requerida..\n");
+        //printf("autorizacion requerida..\n");
         if (is_authenticated_https(connection))
         {
-            printf("\tautorizado..\n");
+            //printf("\tautorizado..\n");
             return actual->reply(connection);
         }
         else
         {
-            printf("\tno autorizado..\n");
+            //printf("\tno autorizado..\n");
             return unauthorized_access(connection);
         }
     }
     else
     {
-        printf("no autorizacion requerida..\n");
+        //printf("no autorizacion requerida..\n");
         return actual->reply(connection);
     }
 
@@ -242,6 +242,6 @@ MHD_Result default_loging(MHD_Connection* connection)
 
 MHD_Result favicon_request(MHD_Connection *connection)
 {
-    printf("\tfavicon imitido\n");
+    //printf("\tfavicon imitido\n");
     return MHD_NO;
 }

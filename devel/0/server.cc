@@ -2,83 +2,7 @@
 *\brief main
 **/
 
-
 #include "server.hh"
-Resource root("/",default_page,false);
-
-
-long get_file_size (const char *filename)
-{
-  FILE *fp;
-
-  fp = fopen (filename, "rb");
-  if (fp)
-  {
-    long size;
-
-    if ((0 != fseek (fp, 0, SEEK_END)) || (-1 == (size = ftell (fp))))
-      size = 0;
-
-    fclose (fp);
-
-    return size;
-  }
-  else
-    return 0;
-}
-
-
-char * load_file (const char *filename)
-{
-  FILE *fp;
-  char *buffer;
-  long size;
-
-  size = get_file_size (filename);
-  if (0 == size)
-    return NULL;
-
-  fp = fopen (filename, "rb");
-  if (! fp)
-    return NULL;
-
-  buffer = (char*)malloc (size + 1);
-  if (! buffer)
-  {
-    fclose (fp);
-    return NULL;
-  }
-  buffer[size] = '\0';
-
-  if (size != (long) fread (buffer, 1, size, fp))
-  {
-    free (buffer);
-    buffer = NULL;
-  }
-
-  fclose (fp);
-  return buffer;
-}
-
-
-const char* next_resource(const char* string,const char* begin)
-{
-    size_t offset = string - begin;
-    //printf("offset : %i\n",offset);
-    size_t length = strlen(string);
-
-    //el final del actual resource
-    size_t actual;
-    for(actual = offset; actual < length; actual++)
-    {
-        if(string[actual] == '/') break;
-    }
-    //
-    if(string[actual + 1] == '\0') return NULL;//si se apunta al final de la cadena
-    if(actual - length - 1 == 0) return NULL;//si se apunta al final de la cadena
-
-    return &string[actual + 1];
-}
 
 //https://www.gnu.org/software/libmicrohttpd/tutorial.html
 //https://www.gnu.org/software/libmicrohttpd/manual/libmicrohttpd.html#SEC_Contents
@@ -114,12 +38,12 @@ int main (int argc, char* argv[])
     //prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     //prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
     //printf("Map size : %llu\n",root.branch.size());
-    for(auto const& r : root.branch)
+    /*for(auto const& r : root.branch)
     {
         printf("\tkey : %s\n",r.first.c_str());
         printf("\t\tvalue : %s\n",r.second.name_string.c_str());
         printf("\t\tsize: %llu\n",r.second.branch.size());
-    }
+    }*/
 
     for(int i = 1; i < argc; i++)
     {
@@ -160,7 +84,7 @@ int main (int argc, char* argv[])
 
     if (key_pem and cert_pem)
     {//running https protocol
-        printf("Running SSL server...\n");
+        //printf("Running SSL server...\n");
         daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
                       NULL, &answer_connection_https, NULL,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
