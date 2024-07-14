@@ -127,6 +127,8 @@
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config libmariadb --libs`" />
+					<Add library="liboctetos-core-3" />
+					<Add directory="../../../core/bin/Debug" />
 				</Linker>
 			</Target>
 			<Target title="exercise">
