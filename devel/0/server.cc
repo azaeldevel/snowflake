@@ -4,7 +4,7 @@
 
 
 #include "server.hh"
-Resource root{"/",NULL,0,container_type::callback_external,false};
+Resource root("/",default_page,false);
 
 
 long get_file_size (const char *filename)
@@ -96,11 +96,11 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
-    Resource loging{"loging",(void*)default_loging,0,container_type::none,false};
-    Resource prueba1{"prueba1",(void*)default_page,0,container_type::callback_external,true};
-    Resource prueba2{"prueba2",(void*)default_page,0,container_type::callback_external,true};
-    Resource prueba21{"prueba21",(void*)default_page,0,container_type::callback_external,true};
-    Resource prueba22{"prueba22",(void*)default_page,0,container_type::callback_external,true};
+    Resource loging("loging",default_loging,false);
+    Resource prueba1("prueba1",default_page,true);
+    Resource prueba2("prueba2",default_page,true);
+    Resource prueba21("prueba21",default_page,true);
+    Resource prueba22("prueba22",default_page,true);
     root.branch.insert(std::pair(loging.name_string,loging));
     root.branch.insert(std::pair(prueba1.name_string,prueba1));
     root.branch.insert(std::pair(prueba2.name_string,prueba2));

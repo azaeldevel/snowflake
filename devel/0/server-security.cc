@@ -41,16 +41,16 @@ char * string_to_base64 (const char *message)
   return tmp;
 }
 
-MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm)
+MHD_Result ask_for_authentication (MHD_Connection *connection, const char *realm)
 {
-    enum MHD_Result ret;
-    struct MHD_Response *response;
+    MHD_Result ret;
+    MHD_Response *response;
     char *headervalue;
     size_t slen;
     const char *strbase = "Basic realm=";
 
     response = MHD_create_response_from_buffer (0, NULL, MHD_RESPMEM_PERSISTENT);
-    if (! response) return MHD_NO;
+    if (!response) return MHD_NO;
 
     slen = strlen (strbase) + strlen (realm) + 1;
     if (NULL == (headervalue = (char*)malloc (slen))) return MHD_NO;
@@ -95,33 +95,6 @@ MHD_Result ask_for_authentication (struct MHD_Connection *connection)
     result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
     MHD_destroy_response (response);
     return result;
-}
-
-int is_authenticated (struct MHD_Connection *connection, const char *username, const char *password)
-{
-    const char *headervalue;
-    char *expected_b64;
-    char *expected;
-    const char *strbase = "Basic ";
-    int authenticated;
-    size_t slen;
-
-    headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
-    if (NULL == headervalue) return 0;
-    if (0 != strncmp (headervalue, strbase, strlen (strbase))) return 0;
-
-    slen = strlen (username) + 1 + strlen (password) + 1;
-    if (NULL == (expected = (char*)malloc (slen))) return 0;
-    snprintf (expected, slen, "%s:%s", username, password);//expected = "usario:password"
-    expected_b64 = string_to_base64 (expected);
-    printf("Header Value : %s\n", headervalue);
-    printf("Expected : %s\n", expected_b64);
-    free (expected);
-    if (NULL == expected_b64) return 0;
-
-    authenticated = (strcmp (headervalue + strlen (strbase), expected_b64) == 0);
-    free (expected_b64);
-    return authenticated;
 }
 
 bool is_authenticated_https (struct MHD_Connection *connection)

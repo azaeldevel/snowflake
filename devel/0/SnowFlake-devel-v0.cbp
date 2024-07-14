@@ -192,6 +192,9 @@
 		<Unit filename="logging.h">
 			<Option target="logging" />
 		</Unit>
+		<Unit filename="server-Resource.cc">
+			<Option target="server" />
+		</Unit>
 		<Unit filename="server-mysql.cc">
 			<Option target="server" />
 		</Unit>

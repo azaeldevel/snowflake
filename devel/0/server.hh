@@ -60,6 +60,8 @@ MHD_Result unknow_resource (MHD_Connection *connection);
 struct Resource
 {
     Resource() = default;
+    Resource(const Resource&);
+    Resource(const std::string&,external,bool);
     ~Resource();
     /**
     *\brief Nombre del recurso
@@ -105,14 +107,6 @@ extern Resource root;
 
 
 
-/**
-*\brief Requiere autentificacion para servidor SSL
-**/
-MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm);
-/**
-*\brief Requiere autentificacion para servidor no-SSL
-**/
-MHD_Result ask_for_authentication (struct MHD_Connection *connection);
 MHD_Result secret_page (struct MHD_Connection *connection);
 MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
@@ -128,12 +122,23 @@ MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
                       size_t *upload_data_size, void **con_cls);
 
 
-char * string_to_base64 (const char *message);
 long get_file_size (const char *filename);
 char * load_file (const char *filename);
-int is_authenticated (struct MHD_Connection *connection, const char *username,const char *password);
+
+
+
+char * string_to_base64 (const char *message);
 bool is_authenticated_https (struct MHD_Connection *connection);
 bool is_authenticated_http (struct MHD_Connection *connection);
+/**
+*\brief Requiere autentificacion para servidor SSL
+**/
+MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm);
+/**
+*\brief Requiere autentificacion para servidor no-SSL
+**/
+MHD_Result ask_for_authentication (struct MHD_Connection *connection);
+
 
 /**
 *\brief Returna una conexion valida a la base de datos

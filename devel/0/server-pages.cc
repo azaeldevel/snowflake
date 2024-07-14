@@ -154,14 +154,14 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
     const char* next = next_resource(url,url);
     if(next)
     {
-        printf("URL Next : %s\n",next);
+        //printf("URL Next : %s\n",next);
         Resource* actual = &root;
-        printf("Map size : %llu\n",actual->branch.size());
+        /*printf("Map size : %llu\n",actual->branch.size());
         for(auto const& r : actual->branch)
         {
             printf("\tkey : %s\n",r.first.c_str());
             printf("\tvalue : %s\n",r.second.name_string.c_str());
-        }
+        }*/
         auto itactual = actual->branch.find(next);
         if(itactual != actual->branch.end())
         {
@@ -264,14 +264,18 @@ MHD_Result default_logout(MHD_Connection* connection)
     const char *page = "<html><body></body></html>";
 
     printf("Logout...\n");
-
-    const char *headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
-    if(headervalue)
+    const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+    if(info)
     {
-        MHD_set_connection_value(connection, MHD_HEADER_KIND,"Authorization","##");
+        const char *headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"WWW-Authenticate");
+        if(headervalue)
+        {
+            MHD_set_connection_value(connection, MHD_HEADER_KIND,"WWW-Authenticate","");
+        }
     }
 
     response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    MHD_add_response_header (response, "Location", "/");
     result = MHD_queue_response (connection, MHD_HTTP_OK, response);
 
     MHD_destroy_response (response);
@@ -283,10 +287,23 @@ MHD_Result default_loging(MHD_Connection* connection)
     const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
     if(info)
     {
-        Resource logout{"logout",(void*)default_logout,0,container_type::callback_external,true};
-        root.branch.insert(std::pair(logout.name_string,logout));
-        return ask_for_authentication(connection);
+        if (not is_authenticated_https(connection))
+        {
+            Resource logout("logout",default_logout,true);
+            root.branch.insert(std::pair(logout.name_string,logout));
+            return ask_for_authentication(connection,REALM);
+        }
+
+    }
+    else
+    {
+        if (not is_authenticated_http(connection))
+        {
+            Resource logout("logout",default_logout,true);
+            root.branch.insert(std::pair(logout.name_string,logout));
+            return ask_for_authentication(connection,REALM);
+        }
     }
 
-    return ask_for_authentication(connection,REALM);
+    return unauthorized_access(connection);
 }
