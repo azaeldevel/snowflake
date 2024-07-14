@@ -80,7 +80,8 @@ const char* next_resource(const char* string,const char* begin)
     return &string[actual + 1];
 }
 
-
+//https://www.gnu.org/software/libmicrohttpd/tutorial.html
+//https://www.gnu.org/software/libmicrohttpd/manual/libmicrohttpd.html#SEC_Contents
 int main (int argc, char* argv[])
 {
     struct MHD_Daemon *daemon;
@@ -96,11 +97,15 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
     */
+    Resource favicon("favicon.ico",favicon_request,false);
+    root.branch.insert(std::pair(favicon.name_string,favicon));
+
+
     Resource loging("loging",default_loging,false);
     Resource prueba1("prueba1",default_page,true);
     Resource prueba2("prueba2",default_page,true);
-    Resource prueba21("prueba21",default_page,true);
-    Resource prueba22("prueba22",default_page,true);
+    //Resource prueba21("prueba21",default_page,true);
+    //Resource prueba22("prueba22",default_page,true);
     root.branch.insert(std::pair(loging.name_string,loging));
     root.branch.insert(std::pair(prueba1.name_string,prueba1));
     root.branch.insert(std::pair(prueba2.name_string,prueba2));

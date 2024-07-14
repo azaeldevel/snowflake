@@ -19,6 +19,7 @@
 #endif
 #include <map>
 #include <string>
+#include <vector>
 
 #define PORT 8081
 
@@ -53,6 +54,7 @@ MHD_Result default_loging(MHD_Connection* connection);
 MHD_Result error_page (MHD_Connection *connection);
 MHD_Result unauthorized_access (MHD_Connection *connection);
 MHD_Result unknow_resource (MHD_Connection *connection);
+MHD_Result favicon_request(MHD_Connection* connection);
 
 /**
 *\brief Representa un Recurso en la URL
@@ -80,7 +82,6 @@ struct Resource
     **/
     size_t container_size;
 
-
     /**
     *\brief su uso depende de la utima llada a la funcion que lo asigna(from(...))
     *\private
@@ -100,22 +101,26 @@ struct Resource
     **/
     MHD_Result reply(MHD_Connection*);
 
-};
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    static Resource* find(const char* url);
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    static Resource* find(const std::vector<std::string>& rcs);
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    Resource* find(const std::vector<std::string>& rcs,size_t);
 
+};
 
 extern Resource root;
 
 
 
 MHD_Result secret_page (struct MHD_Connection *connection);
-MHD_Result answer_to_connection_https (void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
-MHD_Result answer_to_connection_http (void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
 MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,

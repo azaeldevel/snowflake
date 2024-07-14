@@ -138,6 +138,21 @@
 					<Add option="-g" />
 				</Compiler>
 			</Target>
+			<Target title="server_find_resource">
+				<Option output="bin/Debug/server_find_resource" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="`pkg-config libmariadb --cflags`" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config libmariadb --libs`" />
+					<Add library="liboctetos-core-3" />
+					<Add directory="../../../core/bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -194,21 +209,28 @@
 		</Unit>
 		<Unit filename="server-Resource.cc">
 			<Option target="server" />
+			<Option target="server_find_resource" />
 		</Unit>
 		<Unit filename="server-mysql.cc">
 			<Option target="server" />
+			<Option target="server_find_resource" />
 		</Unit>
 		<Unit filename="server-pages.cc">
 			<Option target="server" />
+			<Option target="server_find_resource" />
 		</Unit>
 		<Unit filename="server-security.cc">
 			<Option target="server" />
+			<Option target="server_find_resource" />
 		</Unit>
 		<Unit filename="server.cc">
 			<Option target="server" />
 		</Unit>
 		<Unit filename="server.hh">
 			<Option target="server" />
+		</Unit>
+		<Unit filename="server_find_resource.cc">
+			<Option target="server_find_resource" />
 		</Unit>
 		<Unit filename="sessions.c">
 			<Option compilerVar="CC" />

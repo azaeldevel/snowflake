@@ -4,6 +4,9 @@
 
 
 #include "server.hh"
+#include "../../../core/3/string.hh"
+
+namespace core = oct::core::v3;
 
 
 Resource::Resource(const Resource& r) : name_string(r.name_string),container(r.container),container_size(r.container_size),type(r.type),identify(r.identify),branch(r.branch)
@@ -37,4 +40,64 @@ MHD_Result Resource::reply(MHD_Connection* conn)
     }
 
     return default_page(conn);
+}
+
+Resource* Resource::find(const char* url)
+{
+    size_t length = strlen(url);
+    if(length == 1 and url[0] == '/')
+    {
+        //printf("\nResource : '/'\n");
+        return &root;
+    }
+
+    //
+    auto rcs = core::split(url,"/");
+    //printf("\nSize : '%llu'\n",rcs.size());
+    return find(rcs);
+}
+Resource* Resource::find(const std::vector<std::string>& rcs)
+{
+    auto it = root.branch.find(rcs[0]);
+    if(it != root.branch.end())
+    {
+        //printf("\nResource : '%s'\n",(*it).first.c_str());
+        if(rcs.size() > 1)
+        {
+            return ((*it).second.find(rcs, 1));
+        }
+        else
+        {
+            return &(*it).second;
+        }
+    }
+
+    return NULL;
+}
+Resource* Resource::find(const std::vector<std::string>& rcs,size_t index)
+{
+    if(index >= rcs.size()) return NULL;
+    /*printf("\t'%llu'-> '%s'\n",index,rcs[index].c_str());
+    printf("\tmap size : '%llu\n",branch.size());
+    for(auto const& r : branch)
+    {
+        printf("\tkey : %s\n",r.first.c_str());
+        printf("\tvalue : %s\n",r.second.name_string.c_str());
+    }*/
+    auto it = branch.find(rcs[index]);
+    if(it != branch.end())
+    {
+        //printf("\nResource : '%s'\n",(*it).first.c_str());
+        //printf("\tstring : '%s'\n",(*it).first.c_str());
+        if(index < rcs.size())
+        {
+            return ((*it).second.find(rcs, index + 1));
+        }
+        else
+        {
+            return &(*it).second;
+        }
+    }
+
+    return NULL;
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
+		<Project filename="../core/core-v3.cbp" />
 		<Project filename="snowflake-v0.cbp" />
 		<Project filename="devel/0/SnowFlake-devel-v0.cbp" />
 	</Workspace>
