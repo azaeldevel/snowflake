@@ -120,6 +120,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="-c server.pem -k server.key " />
 				<Compiler>
 					<Add option="-g" />
 					<Add option="`pkg-config libmariadb --cflags`" />
@@ -181,6 +182,10 @@
 		<Unit filename="logging-pages.cc">
 			<Option target="logging" />
 		</Unit>
+		<Unit filename="logging.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="logging.cc">
 			<Option target="logging" />
 		</Unit>
@@ -191,6 +196,9 @@
 			<Option target="server" />
 		</Unit>
 		<Unit filename="server-pages.cc">
+			<Option target="server" />
+		</Unit>
+		<Unit filename="server-security.cc">
 			<Option target="server" />
 		</Unit>
 		<Unit filename="server.cc">

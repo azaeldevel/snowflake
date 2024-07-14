@@ -48,6 +48,11 @@ enum class container_type
 
 typedef MHD_Result (*external)(MHD_Connection*) ;
 MHD_Result default_page(MHD_Connection* connection);
+MHD_Result default_logout(MHD_Connection* connection);
+MHD_Result default_loging(MHD_Connection* connection);
+MHD_Result error_page (MHD_Connection *connection);
+MHD_Result unauthorized_access (MHD_Connection *connection);
+MHD_Result unknow_resource (MHD_Connection *connection);
 
 /**
 *\brief Representa un Recurso en la URL
@@ -121,9 +126,6 @@ MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
-MHD_Result error_page (MHD_Connection *connection);
-MHD_Result unauthorized_access (MHD_Connection *connection);
-MHD_Result unknow_resource (MHD_Connection *connection);
 
 
 char * string_to_base64 (const char *message);

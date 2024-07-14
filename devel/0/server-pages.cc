@@ -1,63 +1,9 @@
-/* Feel free to use this example code in any way
-   you see fit (Public Domain) */
+/**
+*\brief Para guardar handler de creacion de pagina
+**/
+
 
 #include "server.hh"
-
-MHD_Result ask_for_authentication (struct MHD_Connection *connection, const char *realm)
-{
-    enum MHD_Result ret;
-    struct MHD_Response *response;
-    char *headervalue;
-    size_t slen;
-    const char *strbase = "Basic realm=";
-
-    response = MHD_create_response_from_buffer (0, NULL, MHD_RESPMEM_PERSISTENT);
-    if (! response) return MHD_NO;
-
-    slen = strlen (strbase) + strlen (realm) + 1;
-    if (NULL == (headervalue = (char*)malloc (slen))) return MHD_NO;
-    snprintf (headervalue,
-            slen,
-            "%s%s",
-            strbase,
-            realm);
-    ret = MHD_add_response_header (response,"WWW-Authenticate", headervalue);
-    free (headervalue);
-    if (! ret)
-    {
-        MHD_destroy_response (response);
-        return MHD_NO;
-    }
-
-    ret = MHD_queue_response (connection, MHD_HTTP_UNAUTHORIZED, response);
-    MHD_destroy_response (response);
-
-    return ret;
-}
-MHD_Result ask_for_authentication (struct MHD_Connection *connection)
-{
-    char *user;
-    char *pass;
-    pass = NULL;
-    user = MHD_basic_auth_get_username_password (connection,&pass);
-    if(user)
-    {
-        MYSQL* conn = create_conection();
-        if(verify_authentication(conn,user,pass))
-        {
-            mysql_close(conn);
-            return default_page(connection);
-        }
-    }
-
-    MHD_Result result;
-    MHD_Response *response;
-    const char *page = "<html><body><h1>401 Unauthorized Access</h1></body></html>";
-    response =  MHD_create_response_from_buffer (strlen (page), (void *) page,MHD_RESPMEM_PERSISTENT);
-    result = MHD_queue_basic_auth_fail_response (connection, "my realm", response);
-    MHD_destroy_response (response);
-    return result;
-}
 
 
 MHD_Result secret_page (struct MHD_Connection *connection)
@@ -220,10 +166,10 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
         if(itactual != actual->branch.end())
         {
             actual = &(*itactual).second;
-            if(root.identify)
+            const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+            if(info)
             {
-                const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
-                if(info)
+                if(actual->identify)
                 {
                     if (is_authenticated_https(connection))
                     {
@@ -231,10 +177,17 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
                     }
                     else
                     {
-                        return ask_for_authentication(connection,REALM);
+                        return unauthorized_access(connection);
                     }
                 }
                 else
+                {
+                    return actual->reply(connection);
+                }
+            }
+            else
+            {
+                if(actual->identify)
                 {
                     if (is_authenticated_http(connection))
                     {
@@ -242,18 +195,14 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
                     }
                     else
                     {
-                        return ask_for_authentication(connection);
+                        return unauthorized_access(connection);
                     }
                 }
-            }
-            else
-            {
-                return actual->reply(connection);
             }
         }
         else
         {
-            return error_page(connection);
+            return unknow_resource(connection);
         }
     }
 
@@ -263,12 +212,22 @@ MHD_Result answer_connection (void *cls, struct MHD_Connection *connection,
 
 MHD_Result default_page(MHD_Connection* connection)
 {
-    struct MHD_Response *response;
+    MHD_Response *response;
     MHD_Result result;
-    const char *page = "<html><body>home</body></html>";
+    const char *page = "<html><body>Welcome!!!</body></html>";
+    const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+    if(info)
+    {
+        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    }
+    else
+    {
+        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    }
 
-    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-    result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+
 
     MHD_destroy_response (response);
     return result;
@@ -298,4 +257,36 @@ MHD_Result unknow_resource (MHD_Connection *connection)
     MHD_destroy_response (response);
     return result;
 }
+MHD_Result default_logout(MHD_Connection* connection)
+{
+    struct MHD_Response *response;
+    MHD_Result result;
+    const char *page = "<html><body></body></html>";
 
+    printf("Logout...\n");
+
+    const char *headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
+    if(headervalue)
+    {
+        MHD_set_connection_value(connection, MHD_HEADER_KIND,"Authorization","##");
+    }
+
+    response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
+    result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+
+    MHD_destroy_response (response);
+    return result;
+}
+
+MHD_Result default_loging(MHD_Connection* connection)
+{
+    const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
+    if(info)
+    {
+        Resource logout{"logout",(void*)default_logout,0,container_type::callback_external,true};
+        root.branch.insert(std::pair(logout.name_string,logout));
+        return ask_for_authentication(connection);
+    }
+
+    return ask_for_authentication(connection,REALM);
+}

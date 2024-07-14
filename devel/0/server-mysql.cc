@@ -1,5 +1,6 @@
-/* Feel free to use this example code in any way
-   you see fit (Public Domain) */
+/**
+*\brief Para guardar funciones de accesos base de datos MySQL
+**/
 
 #include "server.hh"
 
