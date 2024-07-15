@@ -6,3 +6,7 @@ obj/
 out/
 build/
 vcpkg_installed/
+ing/*.svg
+ing/*.doc
+ing/*.odt
+ing/*.pdf
