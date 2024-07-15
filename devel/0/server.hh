@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #if defined linux
     #include <mysql.h>
-#elif defined(MSYS2)
+#elif defined MSYS2
     #include <mysql/mysql.h>
 #else
 

@@ -37,7 +37,7 @@ Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NUL
     //printf("params -> '%llu'\n",params);
     params[0] = (void*)this;
     //printf("params -> '%llu'\n",params);
-    printf("server -> '%llu'\n",(void*)this);
+    //printf("server -> '%llu'\n",(void*)this);
 }
 Server::~Server()
 {

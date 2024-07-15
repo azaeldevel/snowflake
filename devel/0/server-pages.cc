@@ -144,11 +144,11 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     Databox box;
 
     MHD_get_connection_values(connection, serv->kind, iterator,(void*)&box);
-    printf("HEADER size -> '%llu'\n",box.HEADER.size());
-    printf("COOKIES size -> '%llu'\n",box.COOKIES.size());
-    printf("POST size -> '%llu'\n",box.POST.size());
-    printf("GET size -> '%llu'\n",box.GET.size());
-    printf("FOOTER size -> '%llu'\n",box.FOOTER.size());
+    //printf("HEADER size -> '%llu'\n",box.HEADER.size());
+    //printf("COOKIES size -> '%llu'\n",box.COOKIES.size());
+    //printf("POST size -> '%llu'\n",box.POST.size());
+    //printf("GET size -> '%llu'\n",box.GET.size());
+    //printf("FOOTER size -> '%llu'\n",box.FOOTER.size());
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
