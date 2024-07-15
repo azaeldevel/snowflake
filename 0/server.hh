@@ -164,6 +164,10 @@ struct Server
     MHD_ValueKind kind;
     int port;
 
+#if OCTETOS_SNOWFLAKE_V0_TDD
+    Databox* databox;
+#endif // OCTETOS_SNOWFLAKE_V0_TDD
+
     Server();
     ~Server();
 
