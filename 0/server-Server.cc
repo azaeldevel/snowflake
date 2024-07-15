@@ -27,7 +27,7 @@
 #include "server.hh"
 
 
-Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NULL),root("/",default_page,false),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL),kind(MHD_GET_ARGUMENT_KIND),port(8081)
+Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NULL),root("/",default_page,false),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL),kind(MHD_ValueKind(MHD_GET_ARGUMENT_KIND|MHD_POSTDATA_KIND)),port(8081)
 {
     params = (void**)malloc(sizeof(void*) * params_size);
     /*for(size_t i = 0; i < params_size; i++)
@@ -59,7 +59,7 @@ void Server::start()
     ::root = &root;
     if (key_pem and cert_pem)
     {//running https protocol
-        printf("Running SSL server...\n");
+        //printf("Running SSL server...\n");
         service = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, port, NULL,
                       NULL, &answer_connection_https, params,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
@@ -67,7 +67,7 @@ void Server::start()
     }
     else
     {//running http protocol
-        printf("Running SSL server...\n");
+        //printf("Running SSL server...\n");
         service = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, port, NULL, NULL,
                              &answer_connection_http, params, MHD_OPTION_END);
     }
@@ -142,5 +142,7 @@ void Server::load_certificate(char* file, char* key)
     certificate_file = file;
     certificate_file_key = key;
     cert_pem = load_file (certificate_file);
+    if(not cert_pem) printf("No se encotro el certificado '%s'\n",file);
     key_pem = load_file (certificate_file_key);
+    if(not key_pem) printf("No se encotro la llave '%s'\n",certificate_file_key);
 }

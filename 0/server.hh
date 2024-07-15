@@ -67,10 +67,13 @@ enum class container_type
     callback,
     buffer_external,
 
-    callback_external,
+    handler_simple,
+    handler_full,
 };
 
-typedef MHD_Result (*external)(MHD_Connection*) ;
+typedef MHD_Result (*HANDLER_SIMPLE)(MHD_Connection*) ;
+typedef MHD_AccessHandlerCallback HANDLER_FULL;
+
 MHD_Result default_page(MHD_Connection* connection);
 MHD_Result default_logout(MHD_Connection* connection);
 MHD_Result default_loging(MHD_Connection* connection);
@@ -78,6 +81,25 @@ MHD_Result error_page (MHD_Connection *connection);
 MHD_Result unauthorized_access (MHD_Connection *connection);
 MHD_Result unknow_resource (MHD_Connection *connection);
 MHD_Result favicon_request(MHD_Connection* connection);
+MHD_Result secret_page (struct MHD_Connection *connection);
+MHD_Result answer_connection_http(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+MHD_Result answer_connection_https(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+
+MHD_Result TDD(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+MHD_Result check(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+
 
 /**
 *\brief Representa un Recurso en la URL
@@ -86,7 +108,7 @@ struct Resource
 {
     Resource() = default;
     Resource(const Resource&);
-    Resource(const std::string&,external,bool);
+    Resource(const std::string&,HANDLER_SIMPLE,bool);
     ~Resource();
     /**
     *\brief Nombre del recurso
@@ -137,6 +159,14 @@ struct Resource
     **/
     Resource* find(const std::vector<std::string>& rcs,size_t);
 
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    void set_handler(HANDLER_SIMPLE);
+    /**
+    *\brief El recurso se va a contruir a partir de un callback
+    **/
+    void set_handler(HANDLER_FULL);
 };
 extern Resource* root;
 
@@ -187,15 +217,6 @@ struct Server
 
 
 
-MHD_Result secret_page (struct MHD_Connection *connection);
-MHD_Result answer_connection_http(void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
-MHD_Result answer_connection_https(void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
 
 
 long get_file_size (const char *filename);

@@ -98,13 +98,28 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    //printf("no SSL..\n");
+    printf("Running no SSL..\n");
     if(actual->identify)
     {
         if (is_authenticated_http(connection))
         {
             //printf("\tautorizado..\n");
-            return actual->reply(connection);
+            switch(actual->type)
+            {
+            case container_type::handler_simple:
+            {
+                HANDLER_SIMPLE call = (HANDLER_SIMPLE) actual->container;
+                return call(connection);
+            }
+            case container_type::handler_full:
+            {
+                HANDLER_FULL call = (HANDLER_FULL) actual->container;
+                return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            default:
+                return default_page(connection);
+            }
+            //return actual->reply(connection);
         }
         else
         {
@@ -161,7 +176,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    //printf("SSL detected..\n");
+    printf("Running SSL..\n");
     if(actual->identify)
     {
         printf("autorizacion requerida..\n");
@@ -295,4 +310,25 @@ MHD_Result favicon_request(MHD_Connection *connection)
 {
     //printf("\tfavicon imitido\n");
     return MHD_NO;
+}
+
+
+MHD_Result TDD (void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls)
+{
+
+
+    return default_page(connection);
+}
+
+MHD_Result check (void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls)
+{
+
+
+    return default_page(connection);
 }

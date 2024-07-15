@@ -1,7 +1,6 @@
 
 
 #include "v0.hh"
-#include <curl/curl.h>
 //https://gist.github.com/alan-mushi/19546a0e2c6bd4e059fd
 //https://json-c.github.io/json-c/json-c-current-release/doc/html/index.html#using
 //https://aleen42.gitbooks.io/wiki/content/Programming/c/CJson/CJson.html
@@ -42,17 +41,21 @@ int v0_init(void)
     Resource favicon("favicon.ico",favicon_request,false);
     serv_devel.root.branch.insert(std::pair(favicon.name_string,favicon));
     Resource loging("loging",default_loging,false);
+    Resource tdd("tdd",default_page,false);
+    Resource check("check",default_page,false);
     Resource prueba1("prueba1",default_page,true);
     Resource prueba2("prueba2",default_page,true);
     Resource prueba21("prueba21",default_page,true);
     Resource prueba22("prueba22",default_page,true);
     serv_devel.root.branch.insert(std::pair(loging.name_string,loging));
+    serv_devel.root.branch.insert(std::pair(tdd.name_string,tdd));
+    serv_devel.root.branch.insert(std::pair(check.name_string,check));
     prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
     serv_devel.root.branch.insert(std::pair(prueba1.name_string,prueba1));
     serv_devel.root.branch.insert(std::pair(prueba2.name_string,prueba2));
 
-    serv_devel.load_certificate("tests/server.pem","tests/key.pem");
+    //serv_devel.load_certificate("tests/server.pem","tests/server.key");
     serv_devel.start();
 
 	return 0;
@@ -65,6 +68,10 @@ int v0_clean(void)
 	return 0;
 }
 
+CURL* query(const char* url)
+{
+
+}
 void v0_developing()
 {
     CURL *curl_handle;
@@ -80,7 +87,7 @@ void v0_developing()
     /* init the curl session */
     curl_handle = curl_easy_init();
 
-    /* specify URL to get */
+        /* specify URL to get */
 #ifdef OCTETOS_SERVER
     curl_easy_setopt(curl_handle, CURLOPT_URL, "http://localhost:8081/prueba2?system=linux&application=muposys&code=100");
 #else

@@ -34,7 +34,7 @@ namespace core = oct::core::v3;
 Resource::Resource(const Resource& r) : name_string(r.name_string),container(r.container),container_size(r.container_size),type(r.type),identify(r.identify),branch(r.branch)
 {
 }
-Resource::Resource(const std::string& n,external call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::callback_external),identify(i)
+Resource::Resource(const std::string& n,HANDLER_SIMPLE call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::handler_simple),identify(i)
 {
 }
 Resource::~Resource()
@@ -51,12 +51,13 @@ Resource::~Resource()
 
 MHD_Result Resource::reply(MHD_Connection* conn)
 {
-    external call = (external) container;
     switch(type)
     {
-    case container_type::callback_external:
-        return call(conn);
-        break;
+    case container_type::handler_simple:
+        {
+            HANDLER_SIMPLE call = (HANDLER_SIMPLE) container;
+            return call(conn);
+        }
     default:
         return default_page(conn);
     }
@@ -124,3 +125,16 @@ Resource* Resource::find(const std::vector<std::string>& rcs,size_t index)
 
     return NULL;
 }
+
+
+void Resource::set_handler(HANDLER_SIMPLE h)
+{
+    type = container_type::handler_simple;
+    container = (void*) h;
+}
+void Resource::set_handler(HANDLER_FULL h)
+{
+    type = container_type::handler_full;
+    container = (void*) h;
+}
+
