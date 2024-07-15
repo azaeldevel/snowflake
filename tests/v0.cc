@@ -9,11 +9,6 @@
 //https://github.com/suve/copydeps/tree/release-v.5.0.1
 
 
-struct MemoryStruct
-{
-    char *memory;
-    size_t size;
-};
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
   size_t realsize = size * nmemb;
@@ -68,31 +63,15 @@ int v0_clean(void)
 	return 0;
 }
 
-CURL* query(const char* url)
+CURL* curl_query(const char* url,MemoryStruct* chunk)
 {
-
-}
-void v0_developing()
-{
-    CURL *curl_handle;
     CURLcode res;
-
-    struct MemoryStruct chunk;
-
-    chunk.memory = (char*)malloc(1);  /* grown as needed by the realloc above */
-    chunk.size = 0;    /* no data at this point */
-
-    curl_global_init(CURL_GLOBAL_ALL);
-
+    CURL *curl_handle;
     /* init the curl session */
     curl_handle = curl_easy_init();
 
-        /* specify URL to get */
-#ifdef OCTETOS_SERVER
-    curl_easy_setopt(curl_handle, CURLOPT_URL, "http://localhost:8081/prueba2?system=linux&application=muposys&code=100");
-#else
-    curl_easy_setopt(curl_handle, CURLOPT_URL, "http://192.168.1.2:8081/prueba2?system=linux&application=muposys&code=100");
-#endif // OCTETOS_SERVER
+    /* specify URL to get */
+    curl_easy_setopt(curl_handle, CURLOPT_URL, url);
 
     //login
     curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
@@ -121,7 +100,7 @@ void v0_developing()
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 
     /* we pass our 'chunk' struct to the callback function */
-    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)chunk);
 
     /* some servers do not like requests that are made without a user-agent
      field, so we provide one */
@@ -134,7 +113,7 @@ void v0_developing()
     if(res != CURLE_OK)
     {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        return;
+        //return;
     }
     else
     {
@@ -149,8 +128,29 @@ void v0_developing()
         //printf(">>%s<<",chunk.memory);
     }
 
+    return curl_handle;
+}
+void v0_developing()
+{
+    CURL *curl_handle;
+
+
+    struct MemoryStruct chunk;
+
+    chunk.memory = (char*)malloc(1);  /* grown as needed by the realloc above */
+    chunk.size = 0;    /* no data at this point */
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+#ifdef OCTETOS_SERVER
+    curl_handle = curl_query("http://localhost:8081/prueba2?system=linux&application=muposys&code=100",&chunk);
+#else
+    curl_handle = curl_query("http://192.168.1.2:8081/prueba2?system=linux&application=muposys&code=100");
+#endif // OCTETOS_SERVER
+
     //write test code
     {
+        CU_ASSERT(curl_handle != NULL)
         //printf("Recived : %llu\n",chunk.size);
         CU_ASSERT(chunk.size == 36)
     }

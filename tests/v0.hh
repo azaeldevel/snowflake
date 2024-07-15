@@ -14,10 +14,17 @@
 
 #include "../0/server.hh"
 
+struct MemoryStruct
+{
+    char *memory;
+    size_t size;
+};
+
+
 extern Server serv_devel;
 int v0_init(void);
 int v0_clean(void);
 void v0_developing();
-CURL* query(const char*);
+CURL* curl_query(const char*,MemoryStruct*);
 
 #endif
