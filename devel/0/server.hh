@@ -104,19 +104,37 @@ struct Resource
     /**
     *\brief El recurso se va a contruir a partir de un callback
     **/
-    static Resource* find(const char* url);
+    Resource* find(const char* url);
     /**
     *\brief El recurso se va a contruir a partir de un callback
     **/
-    static Resource* find(const std::vector<std::string>& rcs);
+    Resource* find(const std::vector<std::string>& rcs);
     /**
     *\brief El recurso se va a contruir a partir de un callback
     **/
     Resource* find(const std::vector<std::string>& rcs,size_t);
 
 };
+extern Resource* root;
 
-extern Resource root;
+struct Server
+{
+    MHD_Daemon* service;
+    char* certificate_file;
+    char* certificate_file_key;
+    Resource root;
+    char *key_pem;
+    char *cert_pem;
+    size_t params_size;
+    void** params;
+
+    Server();
+    ~Server();
+
+    void start();
+    void stop();
+    int read_params(int argc, char* argv[]);
+};
 
 
 

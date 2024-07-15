@@ -4,7 +4,7 @@
 
 
 #include "server.hh"
-Resource root("/",default_page,false);
+Resource* root = NULL;//Resource root("/",default_page,false);
 
 
 long get_file_size (const char *filename)

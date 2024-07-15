@@ -42,7 +42,7 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls)
 {
-    enum MHD_Result result;
+    //enum MHD_Result result;
     (void) cls;               /* Unused. Silent compiler warning. */
     (void) url;               /* Unused. Silent compiler warning. */
     (void) version;           /* Unused. Silent compiler warning. */
@@ -53,14 +53,20 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     //if (0 != strcmp (method, "GET"))
     //return MHD_NO;
     //printf("URL : '%s'\n",url);
-    if (NULL == *con_cls)
+    if(NULL == *con_cls)
     {
         *con_cls = connection;
         return MHD_YES;
     }
+    //printf("cls -> '%llu'\n",cls);
+    //printf("con_cls -> '%llu'\n",con_cls);
+    void** params_extra = (void**)cls;
+    //printf("temp -> '%llu'\n",temp);
+    //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
+    Server* serv = (Server*)params_extra[0];
 
     //printf("URL : %s\n",url);
-    Resource* actual = Resource::find(url);
+    Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
     //printf("no SSL..\n");
     if(actual->identify)
@@ -92,7 +98,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls)
 {
-    enum MHD_Result result;
+    //enum MHD_Result result;
     (void) cls;               /* Unused. Silent compiler warning. */
     (void) url;               /* Unused. Silent compiler warning. */
     (void) version;           /* Unused. Silent compiler warning. */
@@ -102,14 +108,21 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
 
     //if(0 != strcmp (method, "GET")) return MHD_NO;
     //printf("URL : '%s'\n",url);
-    if (NULL == *con_cls)
+    /*if (NULL == *con_cls)
     {
         *con_cls = connection;
         return MHD_YES;
-    }
+    }*/
+    //printf("cls -> '%llu'\n",cls);
+    //printf("con_cls -> '%llu'\n",con_cls);
+    void** params_extra = (void**)cls;
+    printf("cls -> '%llu'\n",params_extra);
+    printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
+    Server* serv = (Server*)params_extra[0];
 
     //printf("URL : %s\n",url);
-    Resource* actual = Resource::find(url);
+    Resource* actual = serv->root.find(url);
+    if(not actual) return unknow_resource(connection);
     //printf("SSL detected..\n");
     if(actual->identify)
     {
@@ -215,7 +228,7 @@ MHD_Result default_loging(MHD_Connection* connection)
         if (not is_authenticated_https(connection))
         {
             Resource logout("logout",default_logout,true);
-            root.branch.insert(std::pair(logout.name_string,logout));
+            root->branch.insert(std::pair(logout.name_string,logout));
             return ask_for_authentication(connection,REALM);
         }
         else
@@ -228,7 +241,7 @@ MHD_Result default_loging(MHD_Connection* connection)
         if (not is_authenticated_http(connection))
         {
             Resource logout("logout",default_logout,true);
-            root.branch.insert(std::pair(logout.name_string,logout));
+            root->branch.insert(std::pair(logout.name_string,logout));
             return ask_for_authentication(connection);
         }
         else

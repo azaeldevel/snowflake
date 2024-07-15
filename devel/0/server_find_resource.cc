@@ -4,7 +4,7 @@
 
 
 #include "server.hh"
-Resource root("/",default_page,false);
+Resource* root = NULL;
 
 
 
@@ -12,8 +12,9 @@ Resource root("/",default_page,false);
 //https://www.gnu.org/software/libmicrohttpd/manual/libmicrohttpd.html#SEC_Contents
 int main (int argc, char* argv[])
 {
+    root =  new Resource("/",default_page,false);
     Resource favicon("favicon.ico",favicon_request,false);
-    root.branch.insert(std::pair(favicon.name_string,favicon));
+    root->branch.insert(std::pair(favicon.name_string,favicon));
 
     Resource loging("loging",default_loging,false);
     Resource prueba1("prueba1",default_page,true);
@@ -22,39 +23,39 @@ int main (int argc, char* argv[])
     Resource prueba22("prueba22",default_page,true);
     prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
-    root.branch.insert(std::pair(loging.name_string,loging));
-    root.branch.insert(std::pair(prueba1.name_string,prueba1));
-    root.branch.insert(std::pair(prueba2.name_string,prueba2));
+    root->branch.insert(std::pair(loging.name_string,loging));
+    root->branch.insert(std::pair(prueba1.name_string,prueba1));
+    root->branch.insert(std::pair(prueba2.name_string,prueba2));
 
-    Resource* rc1 = Resource::find("/");
+    Resource* rc1 = root->find("/");
     if(rc1) printf("'/' : enconctrada\n");
     else printf("'/' : no enconctrada\n");
 
-    Resource* rc2 = Resource::find("/loging");
+    Resource* rc2 = root->find("/loging");
     if(rc2) printf("'/loging' : enconctrada\n");
     else printf("'/loging' : no enconctrada\n");
 
-    Resource* rc3 = Resource::find("/prueba1");
+    Resource* rc3 = root->find("/prueba1");
     if(rc3) printf("'/prueba1' : enconctrada\n");
     else printf("'/prueba1' : no enconctrada\n");
 
-    Resource* rc4 = Resource::find("/prueba2");
+    Resource* rc4 = root->find("/prueba2");
     if(rc4) printf("'/prueba2' : enconctrada\n");
     else printf("'/prueba2' : no enconctrada\n");
 
-    Resource* rc5 = Resource::find("/prueba2/prueba21");
+    Resource* rc5 = root->find("/prueba2/prueba21");
     if(rc5) printf("'/prueba2/prueba21' : enconctrada\n");
     else printf("'/prueba2/prueba21' : no enconctrada\n");
 
-    Resource* rc6 = Resource::find("/prueba2/prueba22");
+    Resource* rc6 = root->find("/prueba2/prueba22");
     if(rc6) printf("'/prueba2/prueba22' : enconctrada\n");
     else printf("'/prueba2/prueba22' : no enconctrada\n");
 
-    Resource* rc7 = Resource::find("/prueba2/prueba22/resps");
+    Resource* rc7 = root->find("/prueba2/prueba22/resps");
     if(rc7) printf("'/prueba2/prueba22/resps' : enconctrada\n");
     else printf("'/prueba2/prueba22/resps' : no enconctrada\n");
 
-    Resource* rc8 = Resource::find("/prueba2/prueba26");
+    Resource* rc8 = root->find("/prueba2/prueba26");
     if(rc8) printf("'/prueba2/prueba26' : enconctrada\n");
     else printf("'/prueba2/prueba26' : no enconctrada\n");
 

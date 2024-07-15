@@ -44,11 +44,12 @@ MHD_Result Resource::reply(MHD_Connection* conn)
 
 Resource* Resource::find(const char* url)
 {
+    printf("URL : '/'\n");
     size_t length = strlen(url);
     if(length == 1 and url[0] == '/')
     {
         //printf("\nResource : '/'\n");
-        return &root;
+        return this;
     }
 
     //
@@ -58,8 +59,8 @@ Resource* Resource::find(const char* url)
 }
 Resource* Resource::find(const std::vector<std::string>& rcs)
 {
-    auto it = root.branch.find(rcs[0]);
-    if(it != root.branch.end())
+    auto it = branch.find(rcs[0]);
+    if(it != branch.end())
     {
         //printf("\nResource : '%s'\n",(*it).first.c_str());
         if(1 < rcs.size())

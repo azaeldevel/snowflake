@@ -8,11 +8,7 @@
 //https://www.gnu.org/software/libmicrohttpd/manual/libmicrohttpd.html#SEC_Contents
 int main (int argc, char* argv[])
 {
-    struct MHD_Daemon *daemon;
-    char *key_pem = NULL;
-    char *cert_pem = NULL;
-    char *certificate_file = NULL;
-    char *certificate_file_key = NULL;
+    Server serv;
     /*if(argc <= 1)
     {
         printf("Uso del comando:\n");
@@ -22,7 +18,7 @@ int main (int argc, char* argv[])
     }
     */
     Resource favicon("favicon.ico",favicon_request,false);
-    root.branch.insert(std::pair(favicon.name_string,favicon));
+    serv.root.branch.insert(std::pair(favicon.name_string,favicon));
 
     Resource loging("loging",default_loging,false);
     Resource prueba1("prueba1",default_page,true);
@@ -30,11 +26,11 @@ int main (int argc, char* argv[])
     Resource prueba21("prueba21",default_page,true);
     Resource prueba22("prueba22",default_page,true);
 
-    root.branch.insert(std::pair(loging.name_string,loging));
+    serv.root.branch.insert(std::pair(loging.name_string,loging));
     prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
-    root.branch.insert(std::pair(prueba1.name_string,prueba1));
-    root.branch.insert(std::pair(prueba2.name_string,prueba2));
+    serv.root.branch.insert(std::pair(prueba1.name_string,prueba1));
+    serv.root.branch.insert(std::pair(prueba2.name_string,prueba2));
     //prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     //prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
     //printf("Map size : %llu\n",root.branch.size());
@@ -45,35 +41,7 @@ int main (int argc, char* argv[])
         printf("\t\tsize: %llu\n",r.second.branch.size());
     }*/
 
-    for(int i = 1; i < argc; i++)
-    {
-        if(strcmp("-c",argv[i]) == 0 or strcmp("--certificate",argv[i]) == 0)
-        {
-            if(i + 1 < argc)
-            {
-                certificate_file = argv[++i];
-                cert_pem = load_file (certificate_file);
-            }
-            else
-            {
-                printf ("Deve indicar la direccion del certificado\n");
-                return EXIT_FAILURE;
-            }
-        }
-        else if(strcmp("-k",argv[i]) == 0 or strcmp("--key",argv[i]) == 0)
-        {
-            if(i + 1 < argc)
-            {
-                certificate_file_key = argv[++i];
-                key_pem = load_file (certificate_file_key);
-            }
-            else
-            {
-                printf ("Deve indicar la direccion de llave\n");
-                return EXIT_FAILURE;
-            }
-        }
-    }
+    if(serv.read_params(argc,argv) == EXIT_FAILURE) return EXIT_FAILURE;
 #if OCTETOS_SNOWFLAKE_V0_DEVEL
         //printf("Certificado path: %s\n",cert_pem);
         //printf("Key path : %s\n",key_pem);
@@ -82,36 +50,11 @@ int main (int argc, char* argv[])
 
 
 
-    if (key_pem and cert_pem)
-    {//running https protocol
-        //printf("Running SSL server...\n");
-        daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, PORT, NULL,
-                      NULL, &answer_connection_https, NULL,
-                      MHD_OPTION_HTTPS_MEM_KEY, key_pem,
-                      MHD_OPTION_HTTPS_MEM_CERT, cert_pem, MHD_OPTION_END);
-    }
-    else
-    {//running http protocol
-        daemon = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, PORT, NULL, NULL,
-                             &answer_connection_http, NULL, MHD_OPTION_END);
-    }
-
-
-    if (NULL == daemon)
-    {
-        printf ("%s\n", cert_pem);
-
-        if(key_pem) free (key_pem);
-        if(cert_pem) free (cert_pem);
-
-        return EXIT_FAILURE;
-    }
+    serv.start();
 
     (void) getchar ();
 
-    MHD_stop_daemon (daemon);
-    free (key_pem);
-    free (cert_pem);
+    serv.stop();
 
     return EXIT_SUCCESS;
 }
