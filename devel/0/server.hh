@@ -1,4 +1,27 @@
 
+
+/**
+ *
+ *  This file is part of snowflake.
+ *  snowflake is C/CC++ Library to create a Web Server.
+ *  Copyright (C) 2024  Azael Reyes
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * */
+
+
 #include <sys/types.h>
 #ifndef _WIN32
 #include <sys/select.h>
@@ -117,6 +140,17 @@ struct Resource
 };
 extern Resource* root;
 
+struct Databox
+{
+    std::map<std::string,std::string> HEADER;
+    std::map<std::string,std::string> COOKIES;
+    std::map<std::string,std::string> POST;
+    std::map<std::string,std::string> GET;
+    std::map<std::string,std::string> FOOTER;
+
+
+};
+
 struct Server
 {
     MHD_Daemon* service;
@@ -127,6 +161,7 @@ struct Server
     char *cert_pem;
     size_t params_size;
     void** params;
+    MHD_ValueKind kind;
 
     Server();
     ~Server();
@@ -134,6 +169,13 @@ struct Server
     void start();
     void stop();
     int read_params(int argc, char* argv[]);
+
+    void enable_header_kind();
+    void enable_cookies_kind();
+    void enable_post_kind();
+    void enable_get_kind();
+    void enable_footer_kind();
+    void set_kind(MHD_ValueKind);
 };
 
 
@@ -186,3 +228,6 @@ bool verify_authentication(MYSQL*,const char* u,const char* p);
 *\return si hay un siguiente resource return la un puntero a la primer posicion de otra forma returna NULL
 */
 const char* next_resource(const char* string,const char* begin);
+
+
+MHD_Result iterator(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);

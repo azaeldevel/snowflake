@@ -1,18 +1,40 @@
+
 /**
+ *
+ *  This file is part of snowflake.
+ *  snowflake is C/CC++ Library to create a Web Server.
+ *  Copyright (C) 2024  Azael Reyes
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * */
+
+ /**
 *\brief
 **/
 
 #include "server.hh"
 
 
-Server::Server() : service(NULL),certificate_file(NULL),root("/",default_page,false),certificate_file_key(NULL),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL)
+Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NULL),root("/",default_page,false),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL),kind(MHD_GET_ARGUMENT_KIND)
 {
     params = (void**)malloc(sizeof(void*) * params_size);
     /*for(size_t i = 0; i < params_size; i++)
     {
         params[i] = (void*)malloc(sizeof(void*));
     }*/
-    printf("params -> '%llu'\n",params);
+    //printf("params -> '%llu'\n",params);
     params[0] = (void*)this;
     //printf("params -> '%llu'\n",params);
     printf("server -> '%llu'\n",(void*)this);
@@ -87,4 +109,29 @@ int Server::read_params(int argc, char* argv[])
     }
 
     return EXIT_SUCCESS;
+}
+
+void Server::enable_header_kind()
+{
+    kind = (MHD_ValueKind)(kind | MHD_HEADER_KIND);
+}
+void Server::enable_cookies_kind()
+{
+    kind = (MHD_ValueKind)(kind | MHD_COOKIE_KIND);
+}
+void Server::enable_post_kind()
+{
+    kind = (MHD_ValueKind)(kind | MHD_POSTDATA_KIND);
+}
+void Server::enable_get_kind()
+{
+    kind = (MHD_ValueKind)(kind | MHD_GET_ARGUMENT_KIND);
+}
+void Server::enable_footer_kind()
+{
+    kind = (MHD_ValueKind)(kind | MHD_FOOTER_KIND);
+}
+void Server::set_kind(MHD_ValueKind k)
+{
+    kind = k;
 }

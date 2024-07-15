@@ -1,4 +1,26 @@
+
 /**
+ *
+ *  This file is part of snowflake.
+ *  snowflake is C/CC++ Library to create a Web Server.
+ *  Copyright (C) 2024  Azael Reyes
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * */
+
+ /**
 *\brief Para guardar handler de creacion de pagina
 **/
 
@@ -116,9 +138,17 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
     void** params_extra = (void**)cls;
-    printf("cls -> '%llu'\n",params_extra);
-    printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
+    //printf("cls -> '%llu'\n",params_extra);
+    //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
     Server* serv = (Server*)params_extra[0];
+    Databox box;
+
+    MHD_get_connection_values(connection, serv->kind, iterator,(void*)&box);
+    printf("HEADER size -> '%llu'\n",box.HEADER.size());
+    printf("COOKIES size -> '%llu'\n",box.COOKIES.size());
+    printf("POST size -> '%llu'\n",box.POST.size());
+    printf("GET size -> '%llu'\n",box.GET.size());
+    printf("FOOTER size -> '%llu'\n",box.FOOTER.size());
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
