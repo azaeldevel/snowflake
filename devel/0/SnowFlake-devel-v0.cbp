@@ -155,6 +155,15 @@
 					<Add directory="../../../core/bin/Debug" />
 				</Linker>
 			</Target>
+			<Target title="simplepost">
+				<Option output="bin/Debug/simplepost" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -243,6 +252,10 @@
 		<Unit filename="sessions.c">
 			<Option compilerVar="CC" />
 			<Option target="sessions" />
+		</Unit>
+		<Unit filename="simplepost.c">
+			<Option compilerVar="CC" />
+			<Option target="simplepost" />
 		</Unit>
 		<Unit filename="tlsauthentication.c">
 			<Option compilerVar="CC" />

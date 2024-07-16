@@ -82,6 +82,33 @@ char * load_file (const char *filename)
   return buffer;
 }
 
+
+MHD_Result print (void *cls, MHD_ValueKind kind, const char *key, const char *value)
+{
+    if(kind & MHD_HEADER_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+    }
+    if(kind & MHD_COOKIE_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+    }
+    if(kind & MHD_POSTDATA_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+    }
+    if(kind & MHD_GET_ARGUMENT_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+    }
+    if(kind & MHD_FOOTER_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+    }
+
+    return MHD_YES;
+}
+
 MHD_Result iterator (void *cls, MHD_ValueKind kind, const char *key, const char *value)
 {
     Databox* box = (Databox*)cls;
@@ -141,9 +168,18 @@ MHD_Result iterator_post(void *cls, MHD_ValueKind kind, const char *key, const c
 }
 void kind_get(MHD_Connection* connection,std::map<std::string,std::string>& m)
 {
-    MHD_get_connection_values(connection, MHD_GET_ARGUMENT_KIND, iterator,(void*)&m);
+    MHD_get_connection_values(connection, MHD_GET_ARGUMENT_KIND, iterator_get,(void*)&m);
 }
 void kind_post(MHD_Connection* connection,std::map<std::string,std::string>& m)
 {
-    MHD_get_connection_values(connection, MHD_POSTDATA_KIND, iterator,(void*)&m);
+    MHD_get_connection_values(connection, MHD_POSTDATA_KIND, iterator_post,(void*)&m);
+}
+MHD_Result iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+              const char *filename, const char *content_type,
+              const char *transfer_encoding, const char *data, uint64_t off,
+              size_t size)
+{
+    printf ("%s ==>> %s\n", key, data);
+
+    return MHD_NO;
 }

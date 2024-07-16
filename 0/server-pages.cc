@@ -24,6 +24,7 @@
 *\brief Para guardar handler de creacion de pagina
 **/
 
+#include <array>
 
 #include "server.hh"
 
@@ -75,25 +76,13 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     //if (0 != strcmp (method, "GET"))
     //return MHD_NO;
     //printf("URL : '%s'\n",url);
-    if(NULL == *con_cls)
-    {
-        *con_cls = connection;
-        return MHD_YES;
-    }
+    //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
     void** params_extra = (void**)cls;
     //printf("temp -> '%llu'\n",temp);
     //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
     Server* serv = (Server*)params_extra[0];
-    Databox box;
-
-    //MHD_get_connection_values(connection, serv->kind, iterator,(void*)&box);
-    //printf("HEADER size -> '%llu'\n",box.HEADER.size());
-    //printf("COOKIES size -> '%llu'\n",box.COOKIES.size());
-    //printf("POST size -> '%llu'\n",box.POST.size());
-    //printf("GET size -> '%llu'\n",box.GET.size());
-    //printf("FOOTER size -> '%llu'\n",box.FOOTER.size());
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
@@ -166,25 +155,15 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
 
     //if(0 != strcmp (method, "GET")) return MHD_NO;
     //printf("URL : '%s'\n",url);
-    /*if (NULL == *con_cls)
-    {
-        *con_cls = connection;
-        return MHD_YES;
-    }*/
+    if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
     void** params_extra = (void**)cls;
     //printf("cls -> '%llu'\n",params_extra);
     //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
     Server* serv = (Server*)params_extra[0];
-    Databox box;
 
-    MHD_get_connection_values(connection, serv->kind, iterator,(void*)&box);
-    //printf("HEADER size -> '%llu'\n",box.HEADER.size());
-    //printf("COOKIES size -> '%llu'\n",box.COOKIES.size());
-    //printf("POST size -> '%llu'\n",box.POST.size());
-    //printf("GET size -> '%llu'\n",box.GET.size());
-    //printf("FOOTER size -> '%llu'\n",box.FOOTER.size());
+    //MHD_get_connection_values(connection, MHD_FOOTER_KIND, print,NULL);
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
@@ -192,22 +171,50 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     printf("Running SSL..\n");
     if(actual->identify)
     {
-        printf("autorizacion requerida..\n");
+        //printf("autorizacion requerida..\n");
         if (is_authenticated_https(connection))
         {
-            printf("\tautorizado..\n");
-            return actual->reply(connection);
+            //printf("\tautorizado..\n");
+            switch(actual->type)
+            {
+            case container_type::handler_simple:
+            {
+                HANDLER_SIMPLE call = (HANDLER_SIMPLE) actual->container;
+                return call(connection);
+            }
+            case container_type::handler_full:
+            {
+                HANDLER_FULL call = (HANDLER_FULL) actual->container;
+                return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            default:
+                return default_page(connection);
+            }
         }
         else
         {
-            printf("\tno autorizado..\n");
+            //printf("\tno autorizado..\n");
             return unauthorized_access(connection);
         }
     }
     else
     {
-        printf("no autorizacion requerida..\n");
-        return actual->reply(connection);
+        //printf("no autorizacion requerida..\n");
+        switch(actual->type)
+            {
+            case container_type::handler_simple:
+            {
+                HANDLER_SIMPLE call = (HANDLER_SIMPLE) actual->container;
+                return call(connection);
+            }
+            case container_type::handler_full:
+            {
+                HANDLER_FULL call = (HANDLER_FULL) actual->container;
+                return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            default:
+                return default_page(connection);
+            }
     }
 
     return default_page(connection);
@@ -332,9 +339,6 @@ MHD_Result TDD (void *cls, struct MHD_Connection *connection,
                       size_t *upload_data_size, void **con_cls)
 {
 
-    std::map<std::string,std::string> GET;
-    kind_get(connection,GET);
-
     MHD_Response *response;
     MHD_Result result;
     const char *page = "<html><body>TDD info.....</body></html>";
@@ -356,26 +360,19 @@ MHD_Result TDD (void *cls, struct MHD_Connection *connection,
     return result;
 }
 
-MHD_Result hcheck (MHD_Connection *connection)
+MHD_Result hincrement(MHD_Connection *connection)
 {
-    //std::map<std::string,std::string> POST;
-    //kind_post(connection,POST);
-
-    MHD_Response *response;
-    MHD_Result result;
-    const char *page = "<html><body>Welcome!!!</body></html>";
-    const MHD_ConnectionInfo* info = MHD_get_connection_info(connection,MHD_CONNECTION_INFO_PROTOCOL);
-    if(info)
-    {
-        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-    }
-    else
-    {
-        response = MHD_create_response_from_buffer (strlen (page), (void *) page, MHD_RESPMEM_PERSISTENT);
-        result = MHD_queue_response (connection, MHD_HTTP_OK, response);
-    }
-
+    const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
+    //printf("Number : %s\n",str);
+    int number = std::stoi(str);
+    //printf("number : %i\n",number);
+    number++;
+    //printf("number : %i\n",number);
+    char buffnumber[20];
+    snprintf (buffnumber, sizeof(buffnumber), "%i", number);
+    //printf("Number String: %s\n",buffnumber);
+    MHD_Response *response = MHD_create_response_from_buffer (strlen(buffnumber), (void*)buffnumber, MHD_RESPMEM_MUST_COPY);
+    MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
     MHD_destroy_response (response);
     return result;
 }

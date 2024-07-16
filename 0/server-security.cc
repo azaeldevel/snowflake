@@ -121,24 +121,24 @@ MHD_Result ask_for_authentication (struct MHD_Connection *connection)
 
 bool is_authenticated_https (struct MHD_Connection *connection)
 {
-    printf("\tEl usuario esta autentificado?\n");
+    //printf("\tEl usuario esta autentificado?\n");
     const char *headervalue;
     const char *strbase = "Basic ";
 
     headervalue = MHD_lookup_connection_value (connection, MHD_HEADER_KIND,"Authorization");
     if (NULL == headervalue) return false;
     if (0 != strncmp (headervalue, strbase, strlen (strbase))) return false;
-    printf("Header Value : %s\n", headervalue);
+    //printf("Header Value : %s\n", headervalue);
     auto conn = create_conection();
     if(verify_authentication(conn,headervalue))
     {
-        printf("\t\tSi\n");
+        //printf("\t\tSi\n");
         mysql_close(conn);
         //printf("User : %s",MHD_digest_auth_get_username(connection));
         return true;
     }
 
-    printf("\t\tNo\n");
+    //printf("\t\tNo\n");
     mysql_close(conn);
     return false;
 }

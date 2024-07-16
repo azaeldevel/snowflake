@@ -85,7 +85,7 @@ MHD_Result TDD(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
-MHD_Result hcheck(MHD_Connection *connection);
+MHD_Result hincrement(MHD_Connection *connection);
 
 
 MHD_Result answer_connection_http(void *cls, struct MHD_Connection *connection,
@@ -219,11 +219,16 @@ struct Server
 
 long get_file_size (const char *filename);
 char * load_file (const char *filename);
+MHD_Result print (void *cls, MHD_ValueKind kind, const char *key, const char *value);
 MHD_Result iterator(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
 MHD_Result iterator_get(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
 MHD_Result iterator_post(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
 void kind_get(MHD_Connection*,std::map<std::string,std::string>&);
 void kind_post(MHD_Connection*,std::map<std::string,std::string>&);
+MHD_Result iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+              const char *filename, const char *content_type,
+              const char *transfer_encoding, const char *data, uint64_t off,
+              size_t size);
 
 
 
