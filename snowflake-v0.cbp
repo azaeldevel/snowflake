@@ -52,7 +52,7 @@
 		<Compiler>
 			<Add option="-pedantic" />
 			<Add option="-Wall" />
-			<Add option="`pkg-config libmicrohttpd --cflags` `pkg-config libmariadb --cflags`" />
+			<Add option="`pkg-config libmicrohttpd --cflags` `pkg-config libmariadb --cflags` --std=c++23" />
 		</Compiler>
 		<Linker>
 			<Add option="`pkg-config libmicrohttpd --libs` `pkg-config libmariadb --libs`" />
