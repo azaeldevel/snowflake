@@ -25,7 +25,7 @@
 **/
 
 #include <array>
-
+#include <cmath>
 #include "server.hh"
 
 
@@ -370,6 +370,27 @@ MHD_Result hincrement(MHD_Connection *connection)
     //printf("number : %i\n",number);
     char buffnumber[20];
     snprintf (buffnumber, sizeof(buffnumber), "%i", number);
+    //printf("Number String: %s\n",buffnumber);
+    MHD_Response *response = MHD_create_response_from_buffer (strlen(buffnumber), (void*)buffnumber, MHD_RESPMEM_MUST_COPY);
+    MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    MHD_destroy_response (response);
+    return result;
+}
+
+MHD_Result hap03(MHD_Connection *connection)
+{
+    const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
+    //printf("Number Input: %s\n",str);
+    float number = std::stof(str);
+    float nres = std::stof(str);
+    //printf("number float : %f\n",number);
+    nres = number * number;
+    //printf("number * number : %f\n",nres);
+    nres += sqrt(number);
+    //printf("sqrt(number) : %f\n",sqrt(number));
+    //printf("number mas raiz : %f\n",nres);
+    char buffnumber[20];
+    snprintf (buffnumber, sizeof(buffnumber), "%f", nres);
     //printf("Number String: %s\n",buffnumber);
     MHD_Response *response = MHD_create_response_from_buffer (strlen(buffnumber), (void*)buffnumber, MHD_RESPMEM_MUST_COPY);
     MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);

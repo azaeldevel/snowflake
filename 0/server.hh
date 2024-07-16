@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined linux
+#if defined __linux__
     #include <mysql.h>
 #elif defined MSYS2
     #include <mysql/mysql.h>
@@ -86,6 +86,7 @@ MHD_Result TDD(void *cls, struct MHD_Connection *connection,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
 MHD_Result hincrement(MHD_Connection *connection);
+MHD_Result hap03(MHD_Connection *connection);
 
 
 MHD_Result answer_connection_http(void *cls, struct MHD_Connection *connection,
