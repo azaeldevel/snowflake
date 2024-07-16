@@ -36,8 +36,8 @@ int v0_init(void)
     Resource favicon("favicon.ico",favicon_request,false);
     serv_devel.root.branch.insert(std::pair(favicon.name_string,favicon));
     Resource loging("loging",default_loging,false);
-    Resource tdd("tdd",default_page,false);
-    Resource check("check",default_page,false);
+    Resource tdd("tdd",TDD,false);
+    Resource check("check",hcheck,false);
     Resource prueba1("prueba1",default_page,true);
     Resource prueba2("prueba2",default_page,true);
     Resource prueba21("prueba21",default_page,true);
@@ -50,7 +50,7 @@ int v0_init(void)
     serv_devel.root.branch.insert(std::pair(prueba1.name_string,prueba1));
     serv_devel.root.branch.insert(std::pair(prueba2.name_string,prueba2));
 
-    //serv_devel.load_certificate("tests/server.pem","tests/server.key");
+    serv_devel.load_certificate("tests/server.pem","tests/server.key");
     serv_devel.start();
 
 	return 0;
@@ -63,12 +63,9 @@ int v0_clean(void)
 	return 0;
 }
 
-CURL* curl_query(const char* url,MemoryStruct* chunk)
+void curl_query(CURL* curl_handle,const char* url,MemoryStruct* chunk)
 {
     CURLcode res;
-    CURL *curl_handle;
-    /* init the curl session */
-    curl_handle = curl_easy_init();
 
     /* specify URL to get */
     curl_easy_setopt(curl_handle, CURLOPT_URL, url);
@@ -127,41 +124,111 @@ CURL* curl_query(const char* url,MemoryStruct* chunk)
         //printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
         //printf(">>%s<<",chunk.memory);
     }
-
-    return curl_handle;
 }
+
+void curl_build1(CURL* curl_handle,const char* url,MemoryStruct* chunk)
+{
+    /* specify URL to get */
+    curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+
+    //login
+    curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+    curl_easy_setopt(curl_handle, CURLOPT_USERNAME, "root");
+    curl_easy_setopt(curl_handle, CURLOPT_PASSWORD, "123456");
+    /*
+     * If you want to connect to a site who is not using a certificate that is
+     * signed by one of the certs in the CA bundle you have, you can skip the
+     * verification of the server's certificate. This makes the connection
+     * A LOT LESS SECURE.
+     *
+     * If you have a CA cert for the server stored someplace else than in the
+     * default bundle, then the CURLOPT_CAPATH option might come handy for
+     * you.
+     */
+    curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0L);
+    /*
+     * If the site you are connecting to uses a different host name that what
+     * they have mentioned in their server certificate's commonName (or
+     * subjectAltName) fields, libcurl refuses to connect. You can skip this
+     * check, but it makes the connection insecure.
+     */
+    curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
+
+    /* send all data to this function  */
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+
+    /* we pass our 'chunk' struct to the callback function */
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)chunk);
+
+    /* some servers do not like requests that are made without a user-agent
+     field, so we provide one */
+    curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+}
+
 void v0_developing()
 {
     CURL *curl_handle;
 
-
     struct MemoryStruct chunk;
 
-    chunk.memory = (char*)malloc(1);  /* grown as needed by the realloc above */
-    chunk.size = 0;    /* no data at this point */
-
     curl_global_init(CURL_GLOBAL_ALL);
-
-#ifdef OCTETOS_SERVER
-    curl_handle = curl_query("http://localhost:8081/prueba2?system=linux&application=muposys&code=100",&chunk);
-#else
-    curl_handle = curl_query("http://192.168.1.2:8081/prueba2?system=linux&application=muposys&code=100");
-#endif // OCTETOS_SERVER
+    /* init the curl session */
+    curl_handle = curl_easy_init();
 
     //write test code
     {
+        chunk.memory = (char*)malloc(1);  /* grown as needed by the realloc above */
+        chunk.size = 0;    /* no data at this point */
+#ifdef OCTETOS_SERVER
+        curl_query(curl_handle,"https://localhost:8081/prueba2?system=linux&application=muposys&code=100",&chunk);
+#else
+        curl_query(curl_handle,"http://192.168.1.102:8081:8081/prueba2?system=linux&application=muposys&code=100",&chunk);
+#endif // OCTETOS_SERVER
+
         CU_ASSERT(curl_handle != NULL)
         //printf("Recived : %llu\n",chunk.size);
         CU_ASSERT(chunk.size == 36)
+
+        free(chunk.memory);
     }
 
+
+    //write test code
+    {
+        chunk.memory = (char*)malloc(1);
+        chunk.size = 0;
+#ifdef OCTETOS_SERVER
+        curl_build1(curl_handle,"https://localhost:8081/check",&chunk);
+#else
+        curl_build1(curl_handle,"https://192.168.1.102:8081:8081/check",&chunk);
+#endif // OCTETOS_SERVER
+        static const char* postdata = "counter=1";
+        curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDS, postdata);
+        //curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, (long)strlen(postdata));
+
+        CURLcode res = curl_easy_perform(curl_handle);
+        if(res != CURLE_OK)
+        {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            //return;
+        }
+        else
+        {
+            //printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+            //printf(">>%s<<",chunk.memory);
+        }
+
+        CU_ASSERT(curl_handle != NULL)
+        //printf("Recived : %llu\n",chunk.size);
+        CU_ASSERT(chunk.size == 36)
+
+        free(chunk.memory);
+    }
 
 
     /* cleanup curl stuff */
     curl_easy_cleanup(curl_handle);
-
-    free(chunk.memory);
-
+    //free(chunk.memory);
     /* we are done with libcurl, so clean it up */
     curl_global_cleanup();
 }

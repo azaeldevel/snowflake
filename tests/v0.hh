@@ -25,6 +25,9 @@ extern Server serv_devel;
 int v0_init(void);
 int v0_clean(void);
 void v0_developing();
-CURL* curl_query(const char*,MemoryStruct*);
+
+
+void curl_query(CURL*,const char*,MemoryStruct*);
+void curl_build1(CURL*,const char* url,MemoryStruct* chunk);
 
 #endif

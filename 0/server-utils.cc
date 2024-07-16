@@ -82,26 +82,6 @@ char * load_file (const char *filename)
   return buffer;
 }
 
-
-const char* next_resource(const char* string,const char* begin)
-{
-    size_t offset = string - begin;
-    //printf("offset : %i\n",offset);
-    size_t length = strlen(string);
-
-    //el final del actual resource
-    size_t actual;
-    for(actual = offset; actual < length; actual++)
-    {
-        if(string[actual] == '/') break;
-    }
-    //
-    if(string[actual + 1] == '\0') return NULL;//si se apunta al final de la cadena
-    if(actual - length - 1 == 0) return NULL;//si se apunta al final de la cadena
-
-    return &string[actual + 1];
-}
-
 MHD_Result iterator (void *cls, MHD_ValueKind kind, const char *key, const char *value)
 {
     Databox* box = (Databox*)cls;
@@ -135,3 +115,35 @@ MHD_Result iterator (void *cls, MHD_ValueKind kind, const char *key, const char 
     return MHD_YES;
 }
 
+MHD_Result iterator_get(void *cls, MHD_ValueKind kind, const char *key, const char *value)
+{
+    std::map<std::string,std::string>& box = *(std::map<std::string,std::string>*)cls;
+    //printf("server/iterator -> '%llu'\n",cls);
+    if(kind & MHD_GET_ARGUMENT_KIND)
+    {
+        //printf ("%s: %s\n", key, value);
+        box[key] = value;
+    }
+
+    return MHD_YES;
+}
+MHD_Result iterator_post(void *cls, MHD_ValueKind kind, const char *key, const char *value)
+{
+    std::map<std::string,std::string>& box = *(std::map<std::string,std::string>*)cls;
+    //printf("server/iterator -> '%llu'\n",cls);
+    if(kind & MHD_POSTDATA_KIND)
+    {
+        printf ("%s: %s\n", key, value);
+        box[key] = value;
+    }
+
+    return MHD_YES;
+}
+void kind_get(MHD_Connection* connection,std::map<std::string,std::string>& m)
+{
+    MHD_get_connection_values(connection, MHD_GET_ARGUMENT_KIND, iterator,(void*)&m);
+}
+void kind_post(MHD_Connection* connection,std::map<std::string,std::string>& m)
+{
+    MHD_get_connection_values(connection, MHD_POSTDATA_KIND, iterator,(void*)&m);
+}

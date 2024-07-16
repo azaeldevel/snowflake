@@ -37,6 +37,9 @@ Resource::Resource(const Resource& r) : name_string(r.name_string),container(r.c
 Resource::Resource(const std::string& n,HANDLER_SIMPLE call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::handler_simple),identify(i)
 {
 }
+Resource::Resource(const std::string& n,HANDLER_FULL call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::handler_full),identify(i)
+{
+}
 Resource::~Resource()
 {
     if(type == container_type::buffer)

@@ -59,7 +59,6 @@ enum class erros_code
     not_found_api_pasword,
     unknow_resource,
 };
-
 enum class container_type
 {
     none,
@@ -82,20 +81,18 @@ MHD_Result unauthorized_access (MHD_Connection *connection);
 MHD_Result unknow_resource (MHD_Connection *connection);
 MHD_Result favicon_request(MHD_Connection* connection);
 MHD_Result secret_page (struct MHD_Connection *connection);
+MHD_Result TDD(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls);
+MHD_Result hcheck(MHD_Connection *connection);
+
+
 MHD_Result answer_connection_http(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
 MHD_Result answer_connection_https(void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
-
-MHD_Result TDD(void *cls, struct MHD_Connection *connection,
-                      const char *url, const char *method,
-                      const char *version, const char *upload_data,
-                      size_t *upload_data_size, void **con_cls);
-MHD_Result check(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
@@ -109,6 +106,7 @@ struct Resource
     Resource() = default;
     Resource(const Resource&);
     Resource(const std::string&,HANDLER_SIMPLE,bool);
+    Resource(const std::string&,HANDLER_FULL,bool);
     ~Resource();
     /**
     *\brief Nombre del recurso
@@ -221,6 +219,11 @@ struct Server
 
 long get_file_size (const char *filename);
 char * load_file (const char *filename);
+MHD_Result iterator(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
+MHD_Result iterator_get(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
+MHD_Result iterator_post(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
+void kind_get(MHD_Connection*,std::map<std::string,std::string>&);
+void kind_post(MHD_Connection*,std::map<std::string,std::string>&);
 
 
 
@@ -251,11 +254,3 @@ bool verify_authentication(MYSQL*,const char* autho);
 bool verify_authentication(MYSQL*,const char* u,const char* p);
 
 
-/**
-*\brief Busca el siguiente recource en 'string' comenzando en 'begin'. Todos los slash son ignorado.
-*\return si hay un siguiente resource return la un puntero a la primer posicion de otra forma returna NULL
-*/
-const char* next_resource(const char* string,const char* begin);
-
-
-MHD_Result iterator(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
