@@ -1,14 +1,14 @@
 <?php
 
-if(isset($_POST["number"])) 
+if(isset($_GET["number"])) 
 {
-	$number = $_POST["number"];
+	$number = $_GET["number"];
 	$number++;
 	echo $number;
 }
 else
 {
-	echo "#"
+	echo "#";
 }
 
 ?>

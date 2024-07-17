@@ -155,7 +155,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
 
     //if(0 != strcmp (method, "GET")) return MHD_NO;
     //printf("URL : '%s'\n",url);
-    if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
+    //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
     void** params_extra = (void**)cls;
