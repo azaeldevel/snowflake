@@ -28,6 +28,7 @@
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
+					<Add option="-O2" />
 					<Add option="-s" />
 				</Linker>
 			</Target>
@@ -76,6 +77,7 @@
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
+					<Add option="-O2" />
 					<Add option="-s" />
 					<Add library="octetos-core-3" />
 					<Add library="libmariadb" />
@@ -88,7 +90,7 @@
 		<Compiler>
 			<Add option="-pedantic" />
 			<Add option="-Wall" />
-			<Add option="`pkg-config libmicrohttpd --cflags` `pkg-config libmariadb --cflags` --std=c++23" />
+			<Add option="`pkg-config libmicrohttpd --cflags` `pkg-config libmariadb --cflags` --std=c++20" />
 		</Compiler>
 		<Linker>
 			<Add option="`pkg-config libmicrohttpd --libs` `pkg-config libmariadb --libs`" />
