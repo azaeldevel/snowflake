@@ -81,12 +81,12 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     //printf("con_cls -> '%llu'\n",con_cls);
     //printf("temp -> '%llu'\n",temp);
     //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
-    Server* serv = (Server*)((void**)cls)[0];
+    Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    printf("Running no SSL..\n");
+    //printf("Running no SSL..\n");
     if(actual->identify)
     {
         if (is_authenticated_http(connection))
@@ -165,7 +165,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    printf("Running SSL..\n");
+    //printf("Running SSL..\n");
     if(actual->identify)
     {
         //printf("autorizacion requerida..\n");

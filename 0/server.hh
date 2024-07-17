@@ -47,7 +47,11 @@
 //#define PORT 8081
 
 #define REALM     "\"Maintenance\""
-
+#define POSTBUFFERSIZE  512
+#define PARAM_SERVER    0
+#define PARAM_INFO      1
+#define MAXNAMESIZE     20
+#define MAXANSWERSIZE   512
 
 enum class erros_code
 {
@@ -69,6 +73,7 @@ enum class container_type
     handler_simple,
     handler_full,
 };
+
 
 typedef MHD_Result (*HANDLER_SIMPLE)(MHD_Connection*) ;
 typedef MHD_AccessHandlerCallback HANDLER_FULL;
@@ -214,7 +219,13 @@ struct Server
     void load_certificate(char* file,char* key);
 };
 
+struct Information
+{
+    std::string string;
+    MHD_PostProcessor *postprocessor;
 
+    Information();
+};
 
 
 

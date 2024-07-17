@@ -183,3 +183,8 @@ MHD_Result iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char 
 
     return MHD_NO;
 }
+
+Information::Information() : postprocessor(NULL)
+{
+
+}

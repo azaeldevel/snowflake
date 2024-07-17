@@ -35,7 +35,8 @@ Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NUL
         params[i] = (void*)malloc(sizeof(void*));
     }*/
     //printf("params -> '%llu'\n",params);
-    params[0] = (void*)this;
+    params[PARAM_SERVER] = (void*)this;//pointer to this
+    params[PARAM_INFO] = (void*)new Information;
     //printf("params -> '%llu'\n",params);
     //printf("server -> '%llu'\n",(void*)this);
 }
