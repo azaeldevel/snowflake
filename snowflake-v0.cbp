@@ -45,6 +45,9 @@
 					<Add option="`pkg-config libcurl --libs`" />
 					<Add library="cunit" />
 					<Add library="octetos-core-3" />
+					<Add library="libmariadb" />
+					<Add library="libmicrohttpd" />
+					<Add library="libcurl" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
