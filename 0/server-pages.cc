@@ -79,10 +79,9 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
-    void** params_extra = (void**)cls;
     //printf("temp -> '%llu'\n",temp);
     //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
-    Server* serv = (Server*)params_extra[0];
+    Server* serv = (Server*)((void**)cls)[0];
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
@@ -158,11 +157,9 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
-    void** params_extra = (void**)cls;
     //printf("cls -> '%llu'\n",params_extra);
     //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
-    Server* serv = (Server*)params_extra[0];
-
+    Server* serv = (Server*)((void**)cls)[0];
     //MHD_get_connection_values(connection, MHD_FOOTER_KIND, print,NULL);
 
     //printf("URL : %s\n",url);
