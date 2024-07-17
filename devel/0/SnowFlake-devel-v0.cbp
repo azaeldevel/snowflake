@@ -24,6 +24,7 @@
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
+					<Add option="-O2" />
 					<Add option="-s" />
 				</Linker>
 			</Target>
@@ -62,17 +63,19 @@
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="libmicrohttpd" />
+				</Linker>
 			</Target>
 			<Target title="check-r">
 				<Option output="bin/Release/check" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-				</Compiler>
 				<Linker>
+					<Add option="-O2" />
 					<Add option="-s" />
+					<Add library="libmicrohttpd" />
 				</Linker>
 			</Target>
 			<Target title="ListProductos-dbg">
@@ -164,6 +167,32 @@
 					<Add option="-g" />
 				</Compiler>
 			</Target>
+			<Target title="increment-dbg">
+				<Option output="bin/Debug/increment" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="libmicrohttpd" />
+				</Linker>
+			</Target>
+			<Target title="increment-r">
+				<Option output="bin/Release/increment" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-O2" />
+					<Add option="-s" />
+					<Add library="libmicrohttpd" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -193,6 +222,7 @@
 		<Unit filename="check.c">
 			<Option compilerVar="CC" />
 			<Option target="check-dbg" />
+			<Option target="check-r" />
 		</Unit>
 		<Unit filename="exercise.c">
 			<Option compilerVar="CC" />
@@ -201,6 +231,11 @@
 		<Unit filename="hellobrowser.c">
 			<Option compilerVar="CC" />
 			<Option target="hellowbrowser" />
+		</Unit>
+		<Unit filename="increment.c">
+			<Option compilerVar="CC" />
+			<Option target="increment-dbg" />
+			<Option target="increment-r" />
 		</Unit>
 		<Unit filename="logging-mysql.cc">
 			<Option target="logging" />

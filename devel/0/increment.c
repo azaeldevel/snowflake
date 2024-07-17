@@ -81,7 +81,7 @@ iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
   (void) transfer_encoding;  /* Unused. Silent compiler warning. */
   (void) off;                /* Unused. Silent compiler warning. */
 
-  if (0 == strcmp (key, "number"))
+  if (0 == strcmp (key, "counter"))
   {
     if ((size > 0) && (size <= MAXNAMESIZE))
     {
