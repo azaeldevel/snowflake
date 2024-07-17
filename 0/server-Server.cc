@@ -2,7 +2,7 @@
 /**
  *
  *  This file is part of snowflake.
- *  snowflake is C/CC++ Library to create a Web Server.
+ *  snowflake is C/C++ Library to create a Web Server.
  *  Copyright (C) 2024  Azael Reyes
  *
  *  This program is free software: you can redistribute it and/or modify

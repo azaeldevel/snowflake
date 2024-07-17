@@ -51,6 +51,39 @@
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
+			<Target title="snowflake-dbg">
+				<Option output="bin/Debug/snowflake" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="octetos-core-3" />
+					<Add library="libmariadb" />
+					<Add library="libmicrohttpd" />
+					<Add library="libcurl" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="snowflake-r">
+				<Option output="bin/Release/snowflake" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="octetos-core-3" />
+					<Add library="libmariadb" />
+					<Add library="libmicrohttpd" />
+					<Add library="libcurl" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-pedantic" />
@@ -62,27 +95,45 @@
 		</Linker>
 		<Unit filename="0/server-Resource.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server-Server.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server-mysql.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server-pages.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server-security.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server-utils.cc">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="0/server.hh">
 			<Option target="snowflake-TDD-dbg" />
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="tests/main.cc">
 			<Option target="snowflake-TDD-dbg" />
+		</Unit>
+		<Unit filename="tests/snowflake.cc">
+			<Option target="snowflake-dbg" />
+			<Option target="snowflake-r" />
 		</Unit>
 		<Unit filename="tests/v0.cc">
 			<Option target="snowflake-TDD-dbg" />
