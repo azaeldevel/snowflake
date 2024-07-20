@@ -58,10 +58,17 @@ Server::~Server()
 void Server::start()
 {
     ::root = &root;
+    MHD_FLAG flags = MHD_FLAG(MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_POLL | MHD_USE_AUTO);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_POLL);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_EPOLL);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_EPOLL | MHD_USE_TURBO);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_THREAD_PER_CONNECTION | MHD_USE_TURBO | MHD_USE_TCP_FASTOPEN | MHD_USE_AUTO);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_NO_LISTEN_SOCKET);
+    //MHD_FLAG flags = MHD_FLAG(MHD_USE_NO_LISTEN_SOCKET | MHD_USE_AUTO);
     if (key_pem and cert_pem)
     {//running https protocol
         //printf("Running SSL server...\n");
-        service = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_TLS, port, NULL,
+        service = MHD_start_daemon ( flags | MHD_USE_TLS, port, NULL,
                       NULL, &answer_connection_https, params,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
                       MHD_OPTION_HTTPS_MEM_CERT, cert_pem, MHD_OPTION_END);
@@ -69,7 +76,7 @@ void Server::start()
     else
     {//running http protocol
         //printf("Running SSL server...\n");
-        service = MHD_start_daemon (MHD_USE_INTERNAL_POLLING_THREAD, port, NULL, NULL,
+        service = MHD_start_daemon (flags, port, NULL, NULL,
                              &answer_connection_http, params, MHD_OPTION_END);
     }
 
