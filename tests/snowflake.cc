@@ -54,7 +54,14 @@ int main (int argc, char* argv[])
     serv.load_certificate("tests/server.pem","tests/server.key");
     serv.start();
 
-    (void)getchar();
+    if(serv.service)
+    {
+        (void)getchar();
+    }
+    else
+    {
+        printf("\nFallo la creacion del servicio..\n");
+    }
 
     serv.stop();
     printf("\nFinalizando servidor de desarrollo..\n");
