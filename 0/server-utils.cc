@@ -179,7 +179,7 @@ MHD_Result find_number (void *coninfo_cls, enum MHD_ValueKind kind, const char *
               const char *transfer_encoding, const char *data, uint64_t off,
               size_t size)
 {
-    //printf ("%s ==>> %s\n", key, data);
+    printf ("%s ==>> %s\n", key, data);
     if(strcmp("number",key) == 0)
     {
         Connection* conn = (Connection*)coninfo_cls;
