@@ -159,8 +159,35 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("con_cls -> '%llu'\n",con_cls);
     //printf("cls -> '%llu'\n",params_extra);
     //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
-    Server* serv = (Server*)((void**)cls)[0];
+    Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
     //MHD_get_connection_values(connection, MHD_FOOTER_KIND, print,NULL);
+    if (NULL == *con_cls)
+    {
+        if (0 == strcmp(method, "POST"))
+        {
+            Connection* conn = new Connection;
+            if(not conn) return MHD_NO;
+            conn->postprocessor = MHD_create_post_processor (connection, DEFAULT_BUFFER_SIZE, find_number, (void *) conn);
+            if(not conn->postprocessor)
+            {
+                delete conn;
+                return MHD_NO;
+            }
+            *con_cls = (void *) conn;
+        }
+    }
+
+    if (0 == strcmp(method, "POST"))
+    {
+        Connection* conn = (Connection*)*con_cls;
+        if (*upload_data_size != 0)
+        {
+            MHD_post_process (conn->postprocessor, upload_data,*upload_data_size);
+            *upload_data_size = 0;
+
+            return MHD_YES;
+        }
+    }
 
     //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
@@ -183,6 +210,11 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
             {
                 HANDLER_FULL call = (HANDLER_FULL) actual->container;
                 return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            case container_type::handler_with_connections:
+            {
+                HANDLER_WITH_CONNECTIONS call = (HANDLER_WITH_CONNECTIONS) actual->container;
+                return call(connection,(Connection*)*con_cls);
             }
             default:
                 return default_page(connection);
@@ -357,6 +389,23 @@ MHD_Result TDD (void *cls, struct MHD_Connection *connection,
     return result;
 }
 
+MHD_Result hcheck(MHD_Connection *connection,Connection* c)
+{
+    const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
+    //printf("Number : %s\n",str);
+    int number = std::stoi(str);
+    //printf("number : %i\n",number);
+    number++;
+    //printf("number : %i\n",number);
+    char buffnumber[20];
+    snprintf (buffnumber, sizeof(buffnumber), "%i", number);
+    //printf("Number String: %s\n",buffnumber);
+    MHD_Response *response = MHD_create_response_from_buffer (strlen(buffnumber), (void*)buffnumber, MHD_RESPMEM_MUST_COPY);
+    MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    MHD_destroy_response (response);
+    return result;
+}
+
 MHD_Result hincrement(MHD_Connection *connection)
 {
     const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
@@ -374,6 +423,22 @@ MHD_Result hincrement(MHD_Connection *connection)
     return result;
 }
 
+MHD_Result hap02(MHD_Connection *connection)
+{
+    const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
+    //printf("Number : %s\n",str);
+    int number = std::stoi(str);
+    //printf("number : %i\n",number);
+    number++;
+    //printf("number : %i\n",number);
+    char buffnumber[20];
+    snprintf (buffnumber, sizeof(buffnumber), "%i", number);
+    //printf("Number String: %s\n",buffnumber);
+    MHD_Response *response = MHD_create_response_from_buffer (strlen(buffnumber), (void*)buffnumber, MHD_RESPMEM_MUST_COPY);
+    MHD_Result result = MHD_queue_response (connection, MHD_HTTP_OK, response);
+    MHD_destroy_response (response);
+    return result;
+}
 MHD_Result hap03(MHD_Connection *connection)
 {
     const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");

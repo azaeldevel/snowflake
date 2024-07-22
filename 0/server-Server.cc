@@ -27,7 +27,7 @@
 #include "server.hh"
 
 
-Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NULL),root("/",default_page,false),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL),kind(MHD_ValueKind(MHD_GET_ARGUMENT_KIND|MHD_POSTDATA_KIND)),port(8081)
+Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NULL),root("/",default_page,false),key_pem(NULL),cert_pem(NULL),params_size(3),params(NULL),kind(MHD_ValueKind(MHD_GET_ARGUMENT_KIND|MHD_POSTDATA_KIND)),port(DEFAULT_PORT)
 {
     params = (void**)malloc(sizeof(void*) * params_size);
     /*for(size_t i = 0; i < params_size; i++)
@@ -36,7 +36,6 @@ Server::Server() : service(NULL),certificate_file(NULL),certificate_file_key(NUL
     }*/
     //printf("params -> '%llu'\n",params);
     params[PARAM_SERVER] = (void*)this;//pointer to this
-    params[PARAM_INFO] = (void*)new Information;
     //printf("params -> '%llu'\n",params);
     //printf("server -> '%llu'\n",(void*)this);
 }

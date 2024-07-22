@@ -38,7 +38,9 @@ int v0_init(void)
     serv_devel.root.branch.insert(std::pair(favicon.name_string,favicon));
     Resource loging("loging",default_loging,false);
     Resource tdd("tdd",TDD,false);
+    Resource rccheck("check",hcheck,false);
     Resource rcincrement("increment",hincrement,false);
+    Resource rcap02("ap02",hap02,false);
     Resource rcap03("ap03",hap03,false);
     Resource prueba1("prueba1",default_page,true);
     Resource prueba2("prueba2",default_page,true);
@@ -46,7 +48,9 @@ int v0_init(void)
     Resource prueba22("prueba22",default_page,true);
     serv_devel.root.branch.insert(std::pair(loging.name_string,loging));
     serv_devel.root.branch.insert(std::pair(tdd.name_string,tdd));
+    serv_devel.root.branch.insert(std::pair(rccheck.name_string,rccheck));
     serv_devel.root.branch.insert(std::pair(rcincrement.name_string,rcincrement));
+    serv_devel.root.branch.insert(std::pair(rcap02.name_string,rcap02));
     serv_devel.root.branch.insert(std::pair(rcap03.name_string,rcap03));
     prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
     prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
@@ -255,6 +259,37 @@ void v0_developing()
         float number = std::stof(chunk.memory);
         //printf("number : %f\n",number);
         CU_ASSERT(core::equal(number,10010.0f));
+
+        free(chunk.memory);
+    }
+
+
+    //write test code
+    {
+        chunk.memory = (char*)malloc(1);
+        chunk.size = 0;
+#ifdef OCTETOS_SERVER
+        curl_build1(curl_handle,"https://localhost:8081/check?number=100",&chunk);
+#else
+        curl_build1(curl_handle,"https://localhost:8081/increment?number=100",&chunk);
+#endif // OCTETOS_SERVER
+
+        CURLcode res = curl_easy_perform(curl_handle);
+        if(res != CURLE_OK)
+        {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            //return;
+        }
+        else
+        {
+            //printf("%lu bytes retrieved\n", (unsigned long)chunk.size);
+            //printf(">>%s<<",chunk.memory);
+        }
+
+        CU_ASSERT(curl_handle != NULL)
+        //printf("Recived text: '%s'\n",chunk.memory);
+        //printf("Recived size : '%llu'\n",chunk.size);
+        CU_ASSERT(strcmp(chunk.memory,"101") == 0)
 
         free(chunk.memory);
     }

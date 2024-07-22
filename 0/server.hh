@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-//#define PORT 8081
+#define DEFAULT_PORT 8081
 
 #define REALM     "\"Maintenance\""
 #define POSTBUFFERSIZE  512
@@ -52,6 +52,10 @@
 #define PARAM_INFO      1
 #define MAXNAMESIZE     20
 #define MAXANSWERSIZE   512
+#define DEFAULT_BUFFER_SIZE         128
+#define DEFAULT_BUFFER_SIZE_POST    128
+
+typedef std::vector<char> Buffer;
 
 enum class erros_code
 {
@@ -71,12 +75,23 @@ enum class container_type
     buffer_external,
 
     handler_simple,
+    handler_with_connections,
     handler_full,
 };
 
 
+struct Connection
+{
+    MHD_PostProcessor *postprocessor;
+    Buffer buffer;
+    size_t data_size;
+
+    Connection();
+};
+
 typedef MHD_Result (*HANDLER_SIMPLE)(MHD_Connection*) ;
 typedef MHD_AccessHandlerCallback HANDLER_FULL;
+typedef MHD_Result (*HANDLER_WITH_CONNECTIONS)(MHD_Connection*,Connection*) ;
 
 MHD_Result default_page(MHD_Connection* connection);
 MHD_Result default_logout(MHD_Connection* connection);
@@ -90,7 +105,9 @@ MHD_Result TDD(void *cls, struct MHD_Connection *connection,
                       const char *url, const char *method,
                       const char *version, const char *upload_data,
                       size_t *upload_data_size, void **con_cls);
+MHD_Result hcheck(MHD_Connection*,Connection*);
 MHD_Result hincrement(MHD_Connection *connection);
+MHD_Result hap02(MHD_Connection *connection);
 MHD_Result hap03(MHD_Connection *connection);
 
 
@@ -113,6 +130,7 @@ struct Resource
     Resource(const Resource&);
     Resource(const std::string&,HANDLER_SIMPLE,bool);
     Resource(const std::string&,HANDLER_FULL,bool);
+    Resource(const std::string&,HANDLER_WITH_CONNECTIONS,bool);
     ~Resource();
     /**
     *\brief Nombre del recurso
@@ -219,13 +237,6 @@ struct Server
     void load_certificate(char* file,char* key);
 };
 
-struct Information
-{
-    std::string string;
-    MHD_PostProcessor *postprocessor;
-
-    Information();
-};
 
 
 
@@ -237,7 +248,7 @@ MHD_Result iterator_get(void *cls, enum MHD_ValueKind kind, const char *key, con
 MHD_Result iterator_post(void *cls, enum MHD_ValueKind kind, const char *key, const char *value);
 void kind_get(MHD_Connection*,std::map<std::string,std::string>&);
 void kind_post(MHD_Connection*,std::map<std::string,std::string>&);
-MHD_Result iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+MHD_Result find_number (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
               const char *filename, const char *content_type,
               const char *transfer_encoding, const char *data, uint64_t off,
               size_t size);

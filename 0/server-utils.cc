@@ -174,17 +174,22 @@ void kind_post(MHD_Connection* connection,std::map<std::string,std::string>& m)
 {
     MHD_get_connection_values(connection, MHD_POSTDATA_KIND, iterator_post,(void*)&m);
 }
-MHD_Result iterate_post (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
+MHD_Result find_number (void *coninfo_cls, enum MHD_ValueKind kind, const char *key,
               const char *filename, const char *content_type,
               const char *transfer_encoding, const char *data, uint64_t off,
               size_t size)
 {
-    printf ("%s ==>> %s\n", key, data);
+    //printf ("%s ==>> %s\n", key, data);
+    if(strcmp("number",key) == 0)
+    {
+        Connection* conn = (Connection*)coninfo_cls;
+        strcpy(conn->buffer.data(),data);
+        return MHD_NO;
+    }
 
-    return MHD_NO;
+    return MHD_YES;
 }
 
-Information::Information() : postprocessor(NULL)
+Connection::Connection() : postprocessor(NULL),buffer(DEFAULT_BUFFER_SIZE),data_size(0)
 {
-
 }
