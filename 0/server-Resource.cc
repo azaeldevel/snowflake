@@ -40,6 +40,9 @@ Resource::Resource(const std::string& n,HANDLER_SIMPLE call,bool i) : name_strin
 Resource::Resource(const std::string& n,HANDLER_FULL call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::handler_full),identify(i)
 {
 }
+Resource::Resource(const std::string& n,HANDLER_WITH_CONNECTIONS call,bool i) : name_string(n),container((void*)call),container_size(0),type(container_type::handler_with_connections),identify(i)
+{
+}
 Resource::~Resource()
 {
     if(type == container_type::buffer)
