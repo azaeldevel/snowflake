@@ -1,0 +1,14 @@
+{
+    "version": "0.2.1",
+    "defaults": {},
+    "configurations": [
+      {
+        "type": "cppvsdbg",
+        "request": "launch",
+        "program": "build/hellowbrowser",
+        "project": "CMakeLists.txt",
+        "projectTarget": "hellobrowser.exe",
+        "name": "hellobrowser.exe"
+      }
+    ]
+  }
