@@ -33,7 +33,7 @@ int main (int argc, char* argv[])
     printf("\nIniciando servidor de desarrollo..\n");
     Server serv;
     Resource favicon("favicon.ico",favicon_request,false);
-    //serv.root.branch.insert(std::pair(favicon.name_string,favicon));
+    serv.root.branch.insert(std::pair(favicon.name_string,favicon));
     Resource loging("loging",default_loging,false);
     Resource tdd("tdd",TDD,false);
     Resource rcincrement("increment",hincrement,false);
@@ -43,16 +43,16 @@ int main (int argc, char* argv[])
     Resource prueba2("prueba2",default_page,true);
     Resource prueba21("prueba21",default_page,true);
     Resource prueba22("prueba22",default_page,true);
-    //serv.root.branch.insert(std::pair(loging.name_string,loging));
-    //serv.root.branch.insert(std::pair(tdd.name_string,tdd));
-    //serv.root.branch.insert(std::pair(rcincrement.name_string,rcincrement));
-    //serv.root.branch.insert(std::pair(rcap03.name_string,rcap03));
-    //prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
-    //prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
-    //serv.root.branch.insert(std::pair(prueba1.name_string,prueba1));
-    //serv.root.branch.insert(std::pair(prueba2.name_string,prueba2));
+    serv.root.branch.insert(std::pair(loging.name_string,loging));
+    serv.root.branch.insert(std::pair(tdd.name_string,tdd));
+    serv.root.branch.insert(std::pair(rcincrement.name_string,rcincrement));
+    serv.root.branch.insert(std::pair(rcap03.name_string,rcap03));
+    prueba2.branch.insert(std::pair(prueba21.name_string,prueba21));
+    prueba2.branch.insert(std::pair(prueba22.name_string,prueba22));
+    serv.root.branch.insert(std::pair(prueba1.name_string,prueba1));
+    serv.root.branch.insert(std::pair(prueba2.name_string,prueba2));
 
-    serv.add("/favicon.ico",favicon);
+    /*serv.add("/favicon.ico",favicon);
     serv.add("/loging",loging);
     serv.add("/increment",rcincrement);
     serv.add("/ap02",rcap02);
@@ -60,7 +60,7 @@ int main (int argc, char* argv[])
     serv.add("/prueba1",prueba1);
     serv.add("/prueba2",prueba2);
     serv.add("/prueba21",prueba21);
-    serv.add("/prueba22",prueba22);
+    serv.add("/prueba22",prueba22);*/
 
     //serv.load_certificate("tests/server.pem","tests/server.key");
     serv.start();

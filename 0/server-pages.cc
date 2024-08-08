@@ -84,7 +84,8 @@ MHD_Result answer_connection_http (void *cls, struct MHD_Connection *connection,
     Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
 
     //printf("URL : %s\n",url);
-    Resource* actual = serv->find(url);
+    //Resource* actual = serv->find(url);
+    Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
     //printf("Running no SSL..\n");
     if(actual->identify)
@@ -163,7 +164,8 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
 
     //printf("URL : %s\n",url);
-    Resource* actual = serv->find(url);
+    //Resource* actual = serv->find(url);
+    Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
     //printf("Running no SSL..\n");
     if(actual->identify)
@@ -241,7 +243,8 @@ MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
     Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
 
     //printf("URL : %s\n",url);
-    Resource* actual = serv->find(url);
+    //Resource* actual = serv->find(url);
+    Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
     //printf("Running no SSL..\n");
     if(actual->identify)

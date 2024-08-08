@@ -160,7 +160,7 @@ void Server::load_certificate(char* file, char* key)
 Resource* Server::find(const char* url)
 {
     auto it = tree.find(url);
-    if(it != tree.end()) &(*it).second;
+    if(it != tree.end()) return &(*it).second;
 
     return NULL;
 }
