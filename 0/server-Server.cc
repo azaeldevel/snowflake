@@ -71,7 +71,7 @@ void Server::start()
     {//running https protocol
         //printf("Running SSL server...\n");
         service = MHD_start_daemon ( flags | MHD_USE_TLS, port, NULL,
-                      NULL, &answer_connection, params,
+                      NULL, &answer_connection_https, params,
                       MHD_OPTION_HTTPS_MEM_KEY, key_pem,
                       MHD_OPTION_HTTPS_MEM_CERT, cert_pem, MHD_OPTION_END);
     }
@@ -79,7 +79,7 @@ void Server::start()
     {//running http protocol
         //printf("Running SSL server...\n");
         service = MHD_start_daemon (flags, port, NULL, NULL,
-                             &answer_connection, params, MHD_OPTION_END);
+                             &answer_connection_http, params, MHD_OPTION_END);
     }
 
 }

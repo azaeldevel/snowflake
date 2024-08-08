@@ -168,7 +168,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("Running no SSL..\n");
     if(actual->identify)
     {
-        if (is_authenticated_http(connection))
+        if (is_authenticated_https(connection))
         {
             //printf("\tautorizado..\n");
             switch(actual->type)
