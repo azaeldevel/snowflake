@@ -150,55 +150,27 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     (void) version;           /* Unused. Silent compiler warning. */
     (void) upload_data;       /* Unused. Silent compiler warning. */
     (void) upload_data_size;  /* Unused. Silent compiler warning. */
-    //printf("Conexion: %llu\n" , (void*)connection);
+    //printf("Conecion: %llu\n" , (void*)connection);
 
-    //if(0 != strcmp (method, "GET")) return MHD_NO;
+    //if (0 != strcmp (method, "GET"))
+    //return MHD_NO;
     //printf("URL : '%s'\n",url);
     //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
     //printf("cls -> '%llu'\n",cls);
     //printf("con_cls -> '%llu'\n",con_cls);
-    //printf("cls -> '%llu'\n",params_extra);
-    //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
+    //printf("temp -> '%llu'\n",temp);
+    //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
     Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
-    //MHD_get_connection_values(connection, MHD_FOOTER_KIND, print,NULL);
-    /*if (NULL == *con_cls)
-    {
-        if (0 == strcmp(method, "POST"))
-        {
-            Connection* conn = new Connection;
-            if(not conn) return MHD_NO;
-            conn->postprocessor = MHD_create_post_processor (connection, DEFAULT_BUFFER_SIZE, find_number, (void *) conn);
-            if(not conn->postprocessor)
-            {
-                delete conn;
-                return MHD_NO;
-            }
-            *con_cls = (void *) conn;
-        }
-    }
 
-    if (0 == strcmp(method, "POST"))
-    {
-        Connection* conn = (Connection*)*con_cls;
-        if (*upload_data_size != 0)
-        {
-            MHD_post_process (conn->postprocessor, upload_data,*upload_data_size);
-            *upload_data_size = 0;
-
-            return MHD_YES;
-        }
-    }*/
-
-    printf("URL : %s\n",url);
+    //printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    printf("Running SSL..\n");
+    //printf("Running no SSL..\n");
     if(actual->identify)
     {
-        printf("autorizacion requerida..\n");
-        if (is_authenticated_https(connection))
+        if (is_authenticated_http(connection))
         {
-            printf("\tautorizado..\n");
+            //printf("\tautorizado..\n");
             switch(actual->type)
             {
             case container_type::handler_simple:
@@ -210,11 +182,6 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
             {
                 HANDLER_FULL call = (HANDLER_FULL) actual->container;
                 return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
-            }
-            case container_type::handler_with_connections:
-            {
-                HANDLER_WITH_CONNECTIONS call = (HANDLER_WITH_CONNECTIONS) actual->container;
-                return call(connection,(Connection*)*con_cls);
             }
             default:
                 return default_page(connection);
@@ -229,7 +196,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     else
     {
         //printf("no autorizacion requerida..\n");
-        switch(actual->type)
+            switch(actual->type)
             {
             case container_type::handler_simple:
             {
@@ -248,7 +215,6 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
 
     return default_page(connection);
 }
-
 
 MHD_Result default_page(MHD_Connection* connection)
 {
@@ -409,7 +375,7 @@ MHD_Result hcheck(MHD_Connection *connection,Connection* c)
 MHD_Result hincrement(MHD_Connection *connection)
 {
     const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
-    printf("Number : %s\n",str);
+    //printf("Number : %s\n",str);
     int number = std::stoi(str);
     //printf("number : %i\n",number);
     number++;
