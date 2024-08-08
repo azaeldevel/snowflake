@@ -30,7 +30,9 @@
 
 namespace core = oct::core::v3;
 
-
+Resource::Resource(Resource&& r) : name_string(std::move(r.name_string)),container(r.container),container_size(r.container_size),type(r.type),identify(r.identify)
+{
+}
 Resource::Resource(const Resource& r) : name_string(r.name_string),container(r.container),container_size(r.container_size),type(r.type),identify(r.identify),branch(r.branch)
 {
 }

@@ -156,3 +156,16 @@ void Server::load_certificate(char* file, char* key)
     key_pem = load_file (certificate_file_key);
     if(not key_pem) printf("No se encotro la llave '%s'\n",certificate_file_key);
 }
+
+Resource* Server::find(const char* url)
+{
+    auto it = tree.find(url);
+    if(it != tree.end()) &(*it).second;
+
+    return NULL;
+}
+
+void Server::add(const char* url,const Resource& rc)
+{
+    tree.insert(std::pair(url,rc));
+}

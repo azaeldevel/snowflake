@@ -131,6 +131,7 @@ MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
 struct Resource
 {
     Resource() = default;
+    Resource(Resource&&);
     Resource(const Resource&);
     Resource(const std::string&,HANDLER_SIMPLE,bool);
     Resource(const std::string&,HANDLER_FULL,bool);
@@ -219,6 +220,7 @@ struct Server
     void** params;
     MHD_ValueKind kind;
     int port;
+    std::map<std::string,Resource> tree;
 
 #if OCTETOS_SNOWFLAKE_V0_TDD
     Databox* databox;
@@ -239,6 +241,13 @@ struct Server
     void set_kind(MHD_ValueKind);
 
     void load_certificate(char* file,char* key);
+
+    /**
+    *\brief Buscar
+    **/
+    Resource* find(const char* url);
+
+    void add(const char*,const Resource&);
 };
 
 
