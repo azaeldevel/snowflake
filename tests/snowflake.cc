@@ -51,7 +51,7 @@ int main (int argc, char* argv[])
     serv.root.branch.insert(std::pair(prueba1.name_string,prueba1));
     serv.root.branch.insert(std::pair(prueba2.name_string,prueba2));
 
-    serv.load_certificate("tests/server.pem","tests/server.key");
+    //serv.load_certificate("tests/server.pem","tests/server.key");
     serv.start();
 
     if(serv.service)

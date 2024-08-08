@@ -216,6 +216,84 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     return default_page(connection);
 }
 
+
+MHD_Result answer_connection(void *cls, struct MHD_Connection *connection,
+                      const char *url, const char *method,
+                      const char *version, const char *upload_data,
+                      size_t *upload_data_size, void **con_cls)
+{
+    //enum MHD_Result result;
+    (void) cls;               /* Unused. Silent compiler warning. */
+    (void) url;               /* Unused. Silent compiler warning. */
+    (void) version;           /* Unused. Silent compiler warning. */
+    (void) upload_data;       /* Unused. Silent compiler warning. */
+    (void) upload_data_size;  /* Unused. Silent compiler warning. */
+    //printf("Conecion: %llu\n" , (void*)connection);
+
+    //if (0 != strcmp (method, "GET"))
+    //return MHD_NO;
+    //printf("URL : '%s'\n",url);
+    //if (NULL == *con_cls) {*con_cls = connection; return MHD_YES;}
+    //printf("cls -> '%llu'\n",cls);
+    //printf("con_cls -> '%llu'\n",con_cls);
+    //printf("temp -> '%llu'\n",temp);
+    //printf("temp[0] -> '%llu'\n",(void*)temp[0]);
+    Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
+
+    //printf("URL : %s\n",url);
+    Resource* actual = serv->root.find(url);
+    if(not actual) return unknow_resource(connection);
+    //printf("Running no SSL..\n");
+    if(actual->identify)
+    {
+        if (is_authenticated_http(connection))
+        {
+            //printf("\tautorizado..\n");
+            switch(actual->type)
+            {
+            case container_type::handler_simple:
+            {
+                HANDLER_SIMPLE call = (HANDLER_SIMPLE) actual->container;
+                return call(connection);
+            }
+            case container_type::handler_full:
+            {
+                HANDLER_FULL call = (HANDLER_FULL) actual->container;
+                return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            default:
+                return default_page(connection);
+            }
+        }
+        else
+        {
+            //printf("\tno autorizado..\n");
+            return unauthorized_access(connection);
+        }
+    }
+    else
+    {
+        //printf("no autorizacion requerida..\n");
+            switch(actual->type)
+            {
+            case container_type::handler_simple:
+            {
+                HANDLER_SIMPLE call = (HANDLER_SIMPLE) actual->container;
+                return call(connection);
+            }
+            case container_type::handler_full:
+            {
+                HANDLER_FULL call = (HANDLER_FULL) actual->container;
+                return call(cls,connection,url,method,version,upload_data,upload_data_size,con_cls);
+            }
+            default:
+                return default_page(connection);
+            }
+    }
+
+    return default_page(connection);
+}
+
 MHD_Result default_page(MHD_Connection* connection)
 {
     MHD_Response *response;
