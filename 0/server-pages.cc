@@ -161,7 +161,7 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
     //printf("cls[0] -> '%llu'\n",(void*)params_extra[0]);
     Server* serv = (Server*)((void**)cls)[PARAM_SERVER];
     //MHD_get_connection_values(connection, MHD_FOOTER_KIND, print,NULL);
-    if (NULL == *con_cls)
+    /*if (NULL == *con_cls)
     {
         if (0 == strcmp(method, "POST"))
         {
@@ -187,18 +187,18 @@ MHD_Result answer_connection_https (void *cls, struct MHD_Connection *connection
 
             return MHD_YES;
         }
-    }
+    }*/
 
-    //printf("URL : %s\n",url);
+    printf("URL : %s\n",url);
     Resource* actual = serv->root.find(url);
     if(not actual) return unknow_resource(connection);
-    //printf("Running SSL..\n");
+    printf("Running SSL..\n");
     if(actual->identify)
     {
-        //printf("autorizacion requerida..\n");
+        printf("autorizacion requerida..\n");
         if (is_authenticated_https(connection))
         {
-            //printf("\tautorizado..\n");
+            printf("\tautorizado..\n");
             switch(actual->type)
             {
             case container_type::handler_simple:
@@ -409,7 +409,7 @@ MHD_Result hcheck(MHD_Connection *connection,Connection* c)
 MHD_Result hincrement(MHD_Connection *connection)
 {
     const char* str = MHD_lookup_connection_value(connection,MHD_GET_ARGUMENT_KIND,"number");
-    //printf("Number : %s\n",str);
+    printf("Number : %s\n",str);
     int number = std::stoi(str);
     //printf("number : %i\n",number);
     number++;
